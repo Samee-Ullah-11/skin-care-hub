@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Skin Care Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=1">
+<style>
+  /* ---------- admin dashboard only ---------- */
+
+  .admin-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--forest);
+    color: var(--gold);
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 6px 13px;
+    border-radius: var(--radius-pill);
+  }
+
+  .dash-head { padding: 40px 0 0; }
+  .dash-head h1 { font-size: clamp(28px, 3.6vw, 38px); margin: 10px 0 4px; }
+  .dash-head .date { color: var(--ink-soft); font-size: 15px; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin: 30px 0;
+  }
+  .stat-tile {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    padding: 22px 24px;
+    cursor: pointer;
+    transition: transform .3s cubic-bezier(.22,.8,.36,1), box-shadow .3s ease;
+  }
+  .stat-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+  .stat-tile .go {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--gold-dark);
+    margin-top: 8px;
+  }
+  .panel.flash { animation: flashPanel 1.6s ease; }
+  @keyframes flashPanel {
+    0% { box-shadow: 0 0 0 0 rgba(201, 162, 126, 0); }
+    25% { box-shadow: 0 0 0 5px rgba(201, 162, 126, 0.55); }
+    100% { box-shadow: var(--shadow-soft); }
+  }
+
+  /* clinics modal */
+  .modal-veil {
+    position: fixed;
+    inset: 0;
+    background: rgba(47, 74, 60, 0.4);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 200;
+  }
+  .modal-veil.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lift);
+    padding: 28px;
+    width: 100%;
+    max-width: 620px;
+    max-height: 82vh;
+    overflow: auto;
+    animation: dropIn .4s cubic-bezier(.22,.8,.36,1) both;
+  }
+  .modal h2 {
+    font-size: 21px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .modal .x {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    width: 34px; height: 34px;
+    font-size: 17px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background .2s ease;
+  }
+  .modal .x:hover { background: var(--blush); }
+
+  /* clinic row actions */
+  .row-acts { display: inline-flex; gap: 6px; }
+  .row-acts .ab {
+    width: 32px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .row-acts .ab:hover { transform: translateY(-2px); background: var(--blush); color: var(--forest); }
+  .row-acts .ab.danger:hover { color: #B06A5B; border-color: rgba(176,106,91,0.4); }
+  .q-tag.featured { background: rgba(201,162,126,0.2); color: #9A7449; }
+  .q-tag.blocked { background: var(--blush); color: #B06A5B; }
+  .q-row.blocked .who, .q-row.blocked .avatar { opacity: 0.45; }
+  .q-row.featured .avatar { background: rgba(201,162,126,0.3); }
+  .q-row.leaving { opacity: 0; transform: translateX(26px); transition: opacity .4s ease, transform .4s ease; }
+  @media (max-width: 620px) {
+    .modal .q-row { flex-wrap: wrap; }
+    .modal .row-acts { margin-left: 60px; }
+  }
+
+  /* queue rows */
+  .stat-tile .lbl {
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .stat-tile strong { font-family: var(--font-head); font-size: 30px; font-weight: 600; color: var(--forest); }
+  .stat-tile .sub { font-size: 12.5px; color: var(--sage); font-weight: 700; margin-top: 2px; }
+  .stat-tile.alert strong { color: #B06A5B; }
+  .stat-tile.alert .sub { color: #B06A5B; }
+
+  .admin-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 26px;
+    align-items: start;
+    margin-bottom: 70px;
+  }
+  .admin-grid > div { min-width: 0; }
+
+  .panel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .panel h2 {
+    font-size: 21px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .panel h2 .mini { font-family: var(--font-body); font-size: 13px; font-weight: 800; color: var(--gold-dark); }
+
+  /* bookings chart */
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 150px;
+    margin-top: 4px;
+  }
+  .bar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    height: 100%;
+    cursor: pointer;
+    user-select: none;
+  }
+  .bar .col {
+    width: 100%;
+    max-width: 44px;
+    border-radius: 10px 10px 4px 4px;
+    background: rgba(110, 154, 130, 0.25);
+    transition: background .25s ease, transform .25s ease;
+    transform-origin: bottom;
+  }
+  .bar:hover .col { background: rgba(110, 154, 130, 0.45); transform: scaleY(1.03); }
+  .bar.on .col { background: linear-gradient(180deg, var(--gold), #B8906A); }
+  .bar .d { font-size: 12px; font-weight: 800; color: var(--ink-soft); }
+  .bar .v { font-size: 11.5px; font-weight: 700; color: #AFA79B; }
+  .bar.on .d { color: #9A7449; }
+  .chart-hint { font-size: 13px; color: var(--ink-soft); margin-top: 14px; }
+
+  /* day detail list */
+  .day-detail { display: none; margin-top: 18px; border-top: 1px solid var(--line); padding-top: 16px; }
+  .day-detail.show { display: block; animation: dropIn .45s cubic-bezier(.22,.8,.36,1) both; }
+  .day-detail h3 {
+    font-size: 16px;
+    color: var(--forest);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .day-detail h3 .mini { font-family: var(--font-body); font-size: 12.5px; font-weight: 800; color: var(--gold-dark); }
+  .b-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13.5px;
+  }
+  .b-row:last-of-type { border-bottom: none; }
+  .b-row .time {
+    flex: 0 0 70px;
+    font-weight: 800;
+    color: var(--forest);
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 5px 0;
+    text-align: center;
+    font-size: 12.5px;
+  }
+  .b-row .what { flex: 1; min-width: 0; color: var(--ink-soft); }
+  .b-row .what strong { color: var(--forest); }
+  .b-st {
+    font-size: 11.5px;
+    font-weight: 800;
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+  .b-st.ok { background: rgba(110,154,130,0.14); color: var(--forest); }
+  .b-st.done { background: #F1EDE6; color: var(--ink-soft); }
+  .b-st.cxl { background: var(--blush); color: #B06A5B; }
+  .day-note { font-size: 12.5px; color: #AFA79B; margin-top: 10px; }
+
+  /* queue rows */
+  .q-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .q-row:last-of-type { border-bottom: none; }
+  .q-row .avatar {
+    width: 46px; height: 46px;
+    border-radius: 14px;
+    background: var(--blush);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-head);
+    font-size: 18px;
+    color: var(--forest);
+    flex: 0 0 46px;
+  }
+  .q-row .who { flex: 1; min-width: 0; }
+  .q-row .who strong { display: block; font-size: 15.5px; color: var(--forest); }
+  .q-row .who span { font-size: 13px; color: var(--ink-soft); }
+  .q-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+  .q-tag.new { background: rgba(201,162,126,0.18); color: #9A7449; }
+  .q-tag.renewal { background: rgba(110,154,130,0.14); color: var(--forest); }
+  .q-row .btn { padding: 9px 18px; font-size: 13px; animation: none; }
+
+  /* activity feed */
+  .feed { display: grid; gap: 0; }
+  .f-item {
+    display: flex;
+    gap: 13px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .f-item:last-child { border-bottom: none; }
+  .f-item .ic {
+    width: 34px; height: 34px;
+    flex: 0 0 34px;
+    border-radius: 50%;
+    background: rgba(110, 154, 130, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .f-item strong { color: var(--forest); }
+  .f-item .t { display: block; font-size: 12px; color: #AFA79B; margin-top: 2px; }
+
+  /* flagged */
+  .flag-item {
+    background: var(--blush);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .flag-item strong { display: block; font-size: 14.5px; color: #B06A5B; margin-bottom: 4px; }
+  .flag-item span { font-size: 13.5px; color: var(--ink-soft); }
+  .flag-item .acts { display: flex; gap: 10px; margin-top: 12px; }
+  .flag-item .acts .btn { padding: 8px 16px; font-size: 12.5px; animation: none; }
+
+  @media (max-width: 980px) {
+    .admin-grid { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 620px) {
+    .panel { padding: 22px 18px; }
+    .q-row { flex-wrap: wrap; }
+    .q-row .btn { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ambient drifting shapes -->
+<svg class="leaf-bg tr" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="#FCE8E4"/>
+  <path d="M190 70 C 240 100, 258 160, 228 230" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2" fill="none"/>
+</svg>
+<svg class="leaf-bg bl" width="300" height="300" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="rgba(110,154,130,0.12)"/>
+</svg>
+<svg class="curl-bg ml" width="300" height="360" viewBox="0 0 300 360" fill="none">
+  <path d="M-30 330 C 70 300, 150 240, 150 160 C 150 95, 90 70, 72 115 C 58 150, 100 170, 128 142" stroke="#6E9A82" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M-30 356 C 90 326, 186 254, 196 160" stroke="#C9A27E" stroke-opacity="0.3" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<svg class="curl-bg mr" width="320" height="400" viewBox="0 0 320 400" fill="none">
+  <path d="M340 50 C 240 80, 160 150, 168 240 C 174 310, 240 330, 254 284 C 265 248, 220 230, 194 260" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M350 20 C 230 54, 130 140, 120 250" stroke="#6E9A82" stroke-opacity="0.28" stroke-width="2" stroke-linecap="round"/>
+</svg>
+
+<!-- NAV -->
+<div class="site-nav-wrap">
+  <nav class="site-nav">
+    <a class="brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Skin Care Hub
+    </a>
+    <ul class="nav-links">
+      <li><a href="admin.html" class="active">Admin</a></li>
+      <li><a href="clinics.html">Public site</a></li>
+      <li><a href="index.html" style="color:#B06A5B;" title="Sign out" onclick="if(window.SCH)SCH.signOut()">Sign out</a></li>
+    </ul>
+    <span class="admin-tag">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8"/></svg>
+      Admin
+    </span>
+    <button class="burger" aria-label="Open menu" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="admin.html" class="active">Admin</a>
+    <a href="clinics.html">Public site</a>
+    <a href="index.html" style="color:#B06A5B;" onclick="if(window.SCH)SCH.signOut()">Sign out</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="dash-head reveal">
+    <span class="eyebrow">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.8"/></svg>
+      Hub operations · sample data
+    </span>
+    <h1>Admin overview</h1>
+    <div class="date">Wednesday, 28 October 2026 · Skin Care Hub, Peshawar</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-tile alert reveal" onclick="goPanel('queuePanel')">
+      <div class="lbl">Pending verifications</div>
+      <strong>3</strong>
+      <div class="sub">oldest waiting 1 day</div>
+      <span class="go">Open queue <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="stat-tile reveal d1" onclick="openClinics()">
+      <div class="lbl">Active clinics</div>
+      <strong>42</strong>
+      <div class="sub">+2 this month</div>
+      <span class="go">See the list <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="stat-tile reveal d2" onclick="goPanel('chartPanel')">
+      <div class="lbl">Bookings this week</div>
+      <strong>317</strong>
+      <div class="sub">+9% vs last week</div>
+      <span class="go">Open the graph <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="stat-tile reveal d3" onclick="goPanel('flagPanel')">
+      <div class="lbl">Flagged reviews</div>
+      <strong>1</strong>
+      <div class="sub">needs a look</div>
+      <span class="go">Review it <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+
+  <div class="admin-grid">
+
+    <!-- LEFT: bookings chart + verification queue -->
+    <div>
+      <div class="panel reveal" id="chartPanel">
+        <h2>Bookings this week <span class="mini">317 total · tap a day</span></h2>
+        <div class="bars" id="bars"></div>
+        <div class="chart-hint" id="chartHint">Tap a bar to open that day's booking list.</div>
+        <div class="day-detail" id="dayDetail">
+          <h3><span id="ddTitle"></span><span class="mini" id="ddCount"></span></h3>
+          <div id="ddRows"></div>
+          <div class="day-note" id="ddNote"></div>
+        </div>
+      </div>
+
+      <div class="panel reveal" id="queuePanel">
+        <h2>Verification queue <span class="mini" id="queueCount">—</span></h2>
+        <div id="queueRows"></div>
+      </div>
+
+      <div class="panel reveal" id="flagPanel">
+        <h2>Flagged for review <span class="mini">1 item</span></h2>
+        <div class="flag-item">
+          <strong>Review flagged by clinic — Sample Derma Studio</strong>
+          <span>"Rating doesn't match a completed booking" · patient visit not found in records (sample case).</span>
+          <div class="acts">
+            <button class="btn btn-secondary" onclick="resolveFlag(this, 'kept')">Keep review</button>
+            <button class="btn btn-ghost" onclick="resolveFlag(this, 'removed')">Remove review</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: activity -->
+    <div>
+      <div class="panel reveal d1">
+        <h2>Recent activity</h2>
+        <div class="feed">
+          <div class="f-item">
+            <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span><strong>Sample Aesthetic Centre</strong> was approved and is now live.<span class="t">2 hours ago</span></span>
+          </div>
+          <div class="f-item">
+            <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="4" y="5.5" width="16" height="14.5" rx="4" stroke="#6E9A82" stroke-width="1.7"/><path d="M8 3.5v3M16 3.5v3M4 10h16" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+            <span><strong>Sample Noor Clinic</strong> submitted a new application.<span class="t">4 hours ago</span></span>
+          </div>
+          <div class="f-item">
+            <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 20.5s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7.6a4.5 4.5 0 0 1 7.5 2.9c0 5.4-7.5 10-7.5 10Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
+            <span><strong>Sample Derma Studio</strong> flagged a review for checking.<span class="t">yesterday</span></span>
+          </div>
+          <div class="f-item">
+            <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.7"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+            <span><strong>Sample Skin Clinic</strong> updated its license for renewal.<span class="t">yesterday</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel reveal d2">
+        <h2>Verification SLA</h2>
+        <div class="f-item" style="border:none; padding-top: 0;">
+          <span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#6E9A82" stroke-width="1.7"/><path d="M12 7.5V12l3 2" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+          <span>Average time to verify this month: <strong>1.6 days</strong> — within the 2-day promise shown to clinics.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" style="position:fixed;left:50%;bottom:28px;transform:translate(-50%,80px);background:var(--forest);color:var(--cream);font-size:14.5px;font-weight:700;padding:14px 24px;border-radius:999px;box-shadow:var(--shadow-lift);display:flex;align-items:center;gap:10px;opacity:0;transition:transform .4s cubic-bezier(.22,.8,.36,1),opacity .4s ease;z-index:100;pointer-events:none;">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#FFFBF7" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#FFFBF7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span id="toastMsg">Done</span>
+</div>
+
+<!-- ACTIVE CLINICS MODAL -->
+<div class="modal-veil" id="clinicsModal" onclick="if(event.target===this)closeClinics()">
+  <div class="modal">
+    <h2>Active clinics <span style="display:flex;align-items:center;gap:12px;"><span class="mini" style="font-family:var(--font-body);font-size:13px;font-weight:800;color:var(--gold-dark);">42 live</span><button class="x" onclick="closeClinics()" aria-label="Close">×</button></span></h2>
+    <div id="clinicRows"></div>
+    <div class="day-note">Feature, edit, block or remove a clinic — demo actions. Showing 8 of 42 (sample).</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="bar" style="border:none; padding-top:0;">
+      <span>© 2026 Skin Care Hub · Admin console · Design concept with sample content only</span>
+      <span>Peshawar, Pakistan</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu(btn) {
+    btn.classList.toggle("open");
+    document.getElementById("mobileMenu").classList.toggle("open");
+  }
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    document.getElementById("toastMsg").textContent = msg;
+    t.style.opacity = 1;
+    t.style.transform = "translate(-50%, 0)";
+    clearTimeout(t._h);
+    t._h = setTimeout(() => { t.style.opacity = 0; t.style.transform = "translate(-50%, 80px)"; }, 2200);
+  }
+  function resolveFlag(btn, what) {
+    btn.closest(".flag-item").remove();
+    showToast(what === "kept" ? "Review kept (demo)" : "Review removed (demo)");
+  }
+
+  // clickable stat tiles
+  function goPanel(id) {
+    const p = document.getElementById(id);
+    p.scrollIntoView({ behavior: "smooth", block: "center" });
+    p.classList.remove("flash");
+    void p.offsetWidth;
+    p.classList.add("flash");
+  }
+  const CLINICS = [
+    ["Sample Skin Clinic", "Hayatabad", "4.9", 46],
+    ["Sample Derma Studio", "University Town", "4.8", 41],
+    ["Sample Glow Lounge", "Saddar", "4.7", 38],
+    ["Sample Aesthetic Centre", "Hayatabad", "4.8", 35],
+    ["Sample Noor Clinic", "University Town", "4.6", 29],
+    ["Sample Radiance Clinic", "Gulbahar", "4.7", 27],
+    ["Sample Pearl Skin", "Saddar", "4.5", 24],
+    ["Sample Aura Aesthetics", "Hayatabad", "4.6", 22],
+  ];
+  const AB = {
+    feat: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="currentColor" stroke-width="1.8"/><path d="M12 10v7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    edit: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+    block: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/><path d="M6 6l12 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    del: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+  function openClinics() {
+    const el = document.getElementById("clinicRows");
+    if (!el.children.length) {
+      el.innerHTML = CLINICS.map(c =>
+        '<div class="q-row"><span class="avatar">' + c[0].charAt(7) + '</span><span class="who"><strong>' + c[0] + "</strong><span>" + c[1] + " · " + c[2] + " rating · " + c[3] + ' bookings this week</span></span><span class="q-tag renewal st">Live</span><span class="row-acts">' +
+        '<button class="ab" title="Feature on the home page" onclick="featClinic(this)">' + AB.feat + "</button>" +
+        '<a class="ab" title="Update the listing" href="clinic-profile.html">' + AB.edit + "</a>" +
+        '<button class="ab" title="Block bookings" onclick="blockClinic(this)">' + AB.block + "</button>" +
+        '<button class="ab danger" title="Remove from the Hub" onclick="delClinic(this)">' + AB.del + "</button>" +
+        "</span></div>"
+      ).join("");
+    }
+    document.getElementById("clinicsModal").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+  function rowTag(btn) { return btn.closest(".q-row").querySelector(".st"); }
+  function featClinic(btn) {
+    const row = btn.closest(".q-row"), name = row.querySelector("strong").textContent;
+    if (row.classList.contains("blocked")) { showToast("Unblock the clinic first (demo)"); return; }
+    const on = row.classList.toggle("featured");
+    rowTag(btn).textContent = on ? "Featured" : "Live";
+    rowTag(btn).className = "q-tag st " + (on ? "featured" : "renewal");
+    showToast(on ? name + " is now featured (demo)" : name + " is no longer featured (demo)");
+  }
+  function blockClinic(btn) {
+    const row = btn.closest(".q-row"), name = row.querySelector("strong").textContent;
+    const on = row.classList.toggle("blocked");
+    row.classList.remove("featured");
+    rowTag(btn).textContent = on ? "Blocked" : "Live";
+    rowTag(btn).className = "q-tag st " + (on ? "blocked" : "renewal");
+    btn.title = on ? "Unblock bookings" : "Block bookings";
+    showToast(on ? name + " blocked — hidden from patients (demo)" : name + " unblocked (demo)");
+  }
+  function delClinic(btn) {
+    const row = btn.closest(".q-row"), name = row.querySelector("strong").textContent;
+    if (!row.dataset.arm) {
+      row.dataset.arm = "1";
+      btn.style.background = "var(--blush)";
+      btn.style.color = "#B06A5B";
+      showToast("Tap the bin again to remove " + name);
+      setTimeout(() => { delete row.dataset.arm; btn.style.background = ""; btn.style.color = ""; }, 2600);
+      return;
+    }
+    row.classList.add("leaving");
+    setTimeout(() => row.remove(), 400);
+    showToast(name + " removed from the Hub (demo)");
+  }
+  function closeClinics() {
+    document.getElementById("clinicsModal").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeClinics(); });
+
+  // bookings-per-day chart (sample data)
+  const WEEK = [
+    { d: "Thu", date: "Thu, 22 Oct", n: 44, rows: [
+      ["9:30", "Areeba S.", "Sample Skin Clinic", "Hydrafacial", "done"],
+      ["11:00", "Hamza K.", "Sample Derma Studio", "Acne consultation", "done"],
+      ["3:00", "Mehwish A.", "Sample Glow Lounge", "Chemical peel", "done"],
+      ["5:30", "Sana K.", "Sample Aesthetic Centre", "Signature facial", "cxl"],
+    ]},
+    { d: "Fri", date: "Fri, 23 Oct", n: 61, rows: [
+      ["10:00", "Zainab R.", "Sample Skin Clinic", "Laser session 2 of 6", "done"],
+      ["12:30", "Bilal M.", "Sample Derma Studio", "Skin consultation", "done"],
+      ["4:00", "Hira T.", "Sample Glow Lounge", "Hydrafacial", "done"],
+      ["6:30", "Fatima N.", "Sample Noor Clinic", "Glow facial", "done"],
+    ]},
+    { d: "Sat", date: "Sat, 24 Oct", n: 73, rows: [
+      ["9:00", "Ayesha L.", "Sample Aesthetic Centre", "Bridal package consult", "done"],
+      ["11:30", "Usman J.", "Sample Skin Clinic", "Acne follow-up", "done"],
+      ["2:00", "Maryam D.", "Sample Derma Studio", "Chemical peel", "cxl"],
+      ["5:00", "Khadija B.", "Sample Glow Lounge", "Hydrafacial", "done"],
+    ]},
+    { d: "Sun", date: "Sun, 25 Oct", n: 8, rows: [
+      ["12:00", "Noor F.", "Sample Glow Lounge", "Express facial", "done"],
+      ["2:30", "Rabia S.", "Sample Glow Lounge", "Skin consultation", "done"],
+    ]},
+    { d: "Mon", date: "Mon, 26 Oct", n: 38, rows: [
+      ["10:30", "Iqra W.", "Sample Skin Clinic", "Laser session 3 of 6", "done"],
+      ["1:00", "Danish A.", "Sample Derma Studio", "Beard-area consultation", "done"],
+      ["4:30", "Saba Q.", "Sample Noor Clinic", "Glow facial", "cxl"],
+      ["6:00", "Amna Y.", "Sample Aesthetic Centre", "Signature facial", "done"],
+    ]},
+    { d: "Tue", date: "Tue, 27 Oct", n: 52, rows: [
+      ["9:30", "Laiba H.", "Sample Glow Lounge", "Hydrafacial", "done"],
+      ["11:00", "Taha R.", "Sample Skin Clinic", "Acne consultation", "done"],
+      ["3:30", "Nimra K.", "Sample Derma Studio", "Chemical peel", "done"],
+      ["5:00", "Hafsa M.", "Sample Noor Clinic", "Skin consultation", "done"],
+    ]},
+    { d: "Wed", date: "Wed, 28 Oct · today", n: 41, rows: [
+      ["9:00", "Sana K.", "Sample Skin Clinic", "Signature glow facial", "ok"],
+      ["11:30", "Momina Z.", "Sample Derma Studio", "Hydrafacial", "ok"],
+      ["3:30", "Areej P.", "Sample Glow Lounge", "Chemical peel", "ok"],
+      ["6:00", "Khadija B.", "Sample Aesthetic Centre", "Skin consultation", "ok"],
+    ]},
+  ];
+  const ST = { ok: ["Confirmed", "ok"], done: ["Completed", "done"], cxl: ["Cancelled", "cxl"] };
+  const max = Math.max(...WEEK.map(w => w.n));
+  const barsEl = document.getElementById("bars");
+  WEEK.forEach((w, i) => {
+    const b = document.createElement("div");
+    b.className = "bar";
+    b.innerHTML = '<span class="v">' + w.n + '</span><span class="col" style="height:' + Math.round(w.n / max * 100) + '%"></span><span class="d">' + w.d + "</span>";
+    b.onclick = () => openDay(i);
+    barsEl.appendChild(b);
+  });
+  function openDay(i) {
+    const w = WEEK[i];
+    [...barsEl.children].forEach((b, j) => b.classList.toggle("on", j === i));
+    document.getElementById("chartHint").style.display = "none";
+    document.getElementById("ddTitle").textContent = w.date;
+    document.getElementById("ddCount").textContent = w.n + " bookings";
+    document.getElementById("ddRows").innerHTML = w.rows.map(r =>
+      '<div class="b-row"><span class="time">' + r[0] + '</span><span class="what"><strong>' + r[1] + "</strong> · " + r[3] + " at <strong>" + r[2] + '</strong></span><span class="b-st ' + ST[r[4]][1] + '">' + ST[r[4]][0] + "</span></div>"
+    ).join("");
+    document.getElementById("ddNote").textContent = "Showing " + w.rows.length + " of " + w.n + " bookings — sample data for design review.";
+    const dd = document.getElementById("dayDetail");
+    dd.classList.remove("show");
+    void dd.offsetWidth;
+    dd.classList.add("show");
+  }
+  openDay(6); // today preselected
+
+  let pending = [...document.querySelectorAll(".reveal")];
+  function sweep() {
+    const vh = window.innerHeight;
+    pending = pending.filter((el) => {
+      if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add("in"); return false; }
+      return true;
+    });
+  }
+  window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
+  window.addEventListener("resize", sweep);
+  sweep();
+</script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script>
+  (function () {
+    const u = SCH.require("admin", "login.html?next=admin.html");
+    if (!u) return;
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+    const apps = SCH.applications();
+    const waiting = apps.filter(a => a.status === "pending");
+    document.getElementById("queueCount").textContent = waiting.length + " waiting";
+    document.getElementById("queueRows").innerHTML = apps.length ? apps.map(a => {
+      const tag = a.status === "pending" ? '<span class="q-tag new">New clinic</span>'
+        : a.status === "approved" ? '<span class="q-tag renewal" style="background:rgba(110,154,130,0.14);color:var(--forest);">Approved</span>'
+        : '<span class="q-tag" style="background:var(--blush);color:#B06A5B;">Rejected</span>';
+      const act = a.status === "pending"
+        ? '<a class="btn btn-primary" href="admin-review.html?id=' + a.id + '">Review</a>'
+        : '<a class="btn btn-ghost" href="admin-review.html?id=' + a.id + '">View</a>';
+      return '<div class="q-row">' +
+        '<span class="avatar">' + esc((a.clinic || "?").charAt(0).toUpperCase()) + '</span>' +
+        '<span class="who"><strong>' + esc(a.clinic) + '</strong>' +
+        '<span>' + esc(a.area) + ' · ' + esc(a.owner) + ' · license attached</span></span>' +
+        tag + act +
+      '</div>';
+    }).join("") : '<p style="color:var(--ink-soft);font-size:14.5px;">No applications in the queue — new clinic applications from the Join page land here.</p>';
+  })();
+</script>
+</body>
+</html>

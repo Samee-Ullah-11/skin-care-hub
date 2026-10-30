@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services &amp; Schedule — Skin Care Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=1">
+<style>
+  /* ---------- services & schedule page only ---------- */
+
+  .dash-head { padding: 40px 0 0; }
+  .dash-head h1 { font-size: clamp(28px, 3.6vw, 38px); margin: 10px 0 4px; }
+  .dash-head .date { color: var(--ink-soft); font-size: 15px; }
+  .clinic-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-soft);
+    padding: 9px 20px 9px 10px;
+  }
+  .clinic-chip .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--blush);
+    flex: 0 0 40px;
+  }
+  .clinic-chip .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .clinic-chip strong { display: block; font-size: 14.5px; color: var(--forest); line-height: 1.3; }
+  .clinic-chip span { font-size: 12.5px; color: var(--sage); font-weight: 700; }
+
+  .sub-nav {
+    display: flex;
+    gap: 8px;
+    margin: 26px 0 30px;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 5px;
+    max-width: fit-content;
+  }
+  .sub-nav a {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    transition: background .25s ease, color .25s ease;
+    white-space: nowrap;
+  }
+  .sub-nav a.on { background: var(--forest); color: var(--white); }
+  .sub-nav a:not(.on):hover { color: var(--forest); background: var(--blush); }
+
+  .svc-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 26px;
+    align-items: start;
+    margin-bottom: 70px;
+  }
+  .svc-grid > div { min-width: 0; }
+  .panel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .panel h2 {
+    font-size: 21px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .panel .sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 18px; }
+
+  /* switch */
+  .switch {
+    position: relative;
+    width: 46px; height: 26px;
+    background: #E8E0D5;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background .25s ease;
+    flex: 0 0 46px;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--white);
+    box-shadow: 0 2px 6px rgba(47,74,60,0.2);
+    transition: transform .25s cubic-bezier(.22,.8,.36,1);
+  }
+  .switch.on { background: var(--sage); }
+  .switch.on::after { transform: translateX(20px); }
+
+  /* service rows */
+  .svc-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .svc-row:last-of-type { border-bottom: none; }
+  .svc-row .info { flex: 1; min-width: 0; }
+  .svc-row .info strong { display: block; font-size: 16px; color: var(--forest); }
+  .svc-row .info span { font-size: 13.5px; color: var(--ink-soft); }
+  .svc-row .price-tag {
+    font-weight: 800;
+    color: var(--forest);
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .svc-row .edit {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    background: var(--white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease;
+    flex: 0 0 38px;
+  }
+  .svc-row .edit:hover { border-color: var(--sage); transform: translateY(-2px); }
+  .svc-row.off .info strong, .svc-row.off .price-tag { opacity: .45; }
+  .svc-row.off .info span { opacity: .45; }
+
+  .add-svc {
+    width: 100%;
+    margin-top: 18px;
+    border: 2px dashed var(--line);
+    background: var(--cream);
+    border-radius: 16px;
+    padding: 15px;
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--sage);
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+  }
+  .add-svc:hover { border-color: var(--sage); background: #FDFAF5; transform: translateY(-2px); }
+
+  /* hours */
+  .day-row2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .day-row2:last-of-type { border-bottom: none; }
+  .day-row2 .d { flex: 0 0 76px; font-size: 14.5px; font-weight: 800; color: var(--forest); }
+  .day-row2 .times {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+  .day-row2 .t {
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 7px 12px;
+    font-weight: 700;
+    color: var(--forest);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .day-row2.closed .times { opacity: .4; }
+  .day-row2.closed .t { text-decoration: line-through; }
+
+  /* slot settings */
+  .set-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .set-row:last-of-type { border-bottom: none; }
+  .set-row .lbl2 strong { display: block; font-size: 14.5px; color: var(--forest); }
+  .set-row .lbl2 span { font-size: 12.5px; color: var(--ink-soft); }
+  .set-row select {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--forest);
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 8px 14px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* save bar */
+  .save-bar {
+    position: sticky;
+    bottom: 18px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-lift);
+    padding: 12px 12px 12px 24px;
+    margin-bottom: 40px;
+  }
+  .save-bar span { font-size: 14px; color: var(--ink-soft); }
+  .save-bar .btn { padding: 12px 28px; font-size: 15px; }
+
+  /* toast */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translate(-50%, 80px);
+    background: var(--forest);
+    color: var(--cream);
+    font-size: 14.5px;
+    font-weight: 700;
+    padding: 14px 24px;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-lift);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transition: transform .4s cubic-bezier(.22,.8,.36,1), opacity .4s ease;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+  @media (max-width: 980px) {
+    .svc-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 860px) {
+    .site-nav .clinic-chip { padding: 5px; }
+    .site-nav .clinic-chip > span:last-child { display: none; }
+  }
+  @media (max-width: 620px) {
+    .save-bar span { display: none; }
+    .save-bar { justify-content: center; padding: 10px; }
+    .save-bar .btn { width: 100%; }
+    .panel { padding: 22px 18px; }
+    .svc-row { flex-wrap: wrap; }
+    .day-row2 .times { flex-wrap: wrap; }
+    .sub-nav { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+    .sub-nav::-webkit-scrollbar { display: none; }
+  }
+  .sub-nav .l-short { display: none; }
+  @media (max-width: 620px) {
+    .sub-nav { max-width: 100%; justify-content: space-between; gap: 4px; }
+    .sub-nav a { padding: 10px 13px; font-size: 13px; flex: 1; text-align: center; }
+    .sub-nav .l-full { display: none; }
+    .sub-nav .l-short { display: inline; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ambient drifting shapes -->
+<svg class="leaf-bg tr" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="#FCE8E4"/>
+  <path d="M190 70 C 240 100, 258 160, 228 230" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2" fill="none"/>
+</svg>
+<svg class="leaf-bg bl" width="300" height="300" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="rgba(110,154,130,0.12)"/>
+</svg>
+<svg class="curl-bg ml" width="300" height="360" viewBox="0 0 300 360" fill="none">
+  <path d="M-30 330 C 70 300, 150 240, 150 160 C 150 95, 90 70, 72 115 C 58 150, 100 170, 128 142" stroke="#6E9A82" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M-30 356 C 90 326, 186 254, 196 160" stroke="#C9A27E" stroke-opacity="0.3" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<svg class="curl-bg mr" width="320" height="400" viewBox="0 0 320 400" fill="none">
+  <path d="M340 50 C 240 80, 160 150, 168 240 C 174 310, 240 330, 254 284 C 265 248, 220 230, 194 260" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M350 20 C 230 54, 130 140, 120 250" stroke="#6E9A82" stroke-opacity="0.28" stroke-width="2" stroke-linecap="round"/>
+</svg>
+
+<!-- NAV -->
+<div class="site-nav-wrap">
+  <nav class="site-nav">
+    <a class="brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Skin Care Hub
+    </a>
+    <ul class="nav-links">
+      <li><a href="dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="clinic.html?preview=1">Public page</a></li>
+      <li><a href="index.html" style="color:#B06A5B;" title="Sign out" onclick="if(window.SCH)SCH.signOut()">Sign out</a></li>
+    </ul>
+    <span class="clinic-chip">
+      <span class="avatar">
+        <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=120&q=80&auto=format&fit=crop" alt="" onerror="this.remove()">
+      </span>
+      <span>
+        <strong>Sample Skin Clinic</strong>
+        <span>● Verified</span>
+      </span>
+    </span>
+    <button class="burger" aria-label="Open menu" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="clinic.html?preview=1">Public page</a>
+    <a href="index.html" style="color:#B06A5B;" onclick="if(window.SCH)SCH.signOut()">Sign out</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="dash-head reveal">
+    <span class="eyebrow">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.8"/></svg>
+      Clinic dashboard · sample data
+    </span>
+    <h1>Services &amp; schedule</h1>
+    <div class="date">What patients can book, and when.</div>
+
+    <div class="sub-nav">
+      <a href="dashboard.html">Overview</a>
+      <a href="services.html" class="on"><span class="l-full">Services &amp; schedule</span><span class="l-short">Services</span></a>
+      <a href="clinic-profile.html"><span class="l-full">Clinic profile</span><span class="l-short">Profile</span></a>
+    </div>
+  </div>
+
+  <div class="svc-grid">
+
+    <!-- LEFT: services -->
+    <div>
+      <div class="panel reveal">
+        <h2>Your services</h2>
+        <p class="sub">Switch a service off to hide it from patients without deleting it.</p>
+
+        <div class="svc-row">
+          <span class="switch on" onclick="flip(this)"></span>
+          <span class="info"><strong>Hydrafacial</strong><span>60 min · deep cleanse, exfoliation &amp; hydration</span></span>
+          <span class="price-tag">Rs. 6,500</span>
+          <button class="edit" aria-label="Edit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="svc-row">
+          <span class="switch on" onclick="flip(this)"></span>
+          <span class="info"><strong>Signature Glow Facial</strong><span>45 min · brightening &amp; massage</span></span>
+          <span class="price-tag">Rs. 3,500</span>
+          <button class="edit" aria-label="Edit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="svc-row">
+          <span class="switch on" onclick="flip(this)"></span>
+          <span class="info"><strong>Chemical Peel</strong><span>30 min · consultation included</span></span>
+          <span class="price-tag">Rs. 5,000</span>
+          <button class="edit" aria-label="Edit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="svc-row">
+          <span class="switch on" onclick="flip(this)"></span>
+          <span class="info"><strong>Carbon Laser Facial</strong><span>40 min · pore refining</span></span>
+          <span class="price-tag">Rs. 8,000</span>
+          <button class="edit" aria-label="Edit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="svc-row off">
+          <span class="switch" onclick="flip(this)"></span>
+          <span class="info"><strong>Microneedling</strong><span>50 min · currently hidden from patients</span></span>
+          <span class="price-tag">Rs. 7,000</span>
+          <button class="edit" aria-label="Edit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="svc-row">
+          <span class="switch on" onclick="flip(this)"></span>
+          <span class="info"><strong>Skin Consultation</strong><span>20 min · with dermatologist</span></span>
+          <span class="price-tag">Rs. 1,500</span>
+          <button class="edit" aria-label="Edit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <button class="add-svc">+ Add a new service</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: schedule -->
+    <div>
+      <div class="panel reveal d1">
+        <h2>Opening hours</h2>
+        <p class="sub">Tap a switch to close a day.</p>
+
+        <div class="day-row2">
+          <span class="d">Mon</span>
+          <span class="times"><span class="t">10:00 AM</span>–<span class="t">8:00 PM</span></span>
+          <span class="switch on" onclick="flipDay(this)"></span>
+        </div>
+        <div class="day-row2">
+          <span class="d">Tue</span>
+          <span class="times"><span class="t">10:00 AM</span>–<span class="t">8:00 PM</span></span>
+          <span class="switch on" onclick="flipDay(this)"></span>
+        </div>
+        <div class="day-row2">
+          <span class="d">Wed</span>
+          <span class="times"><span class="t">10:00 AM</span>–<span class="t">8:00 PM</span></span>
+          <span class="switch on" onclick="flipDay(this)"></span>
+        </div>
+        <div class="day-row2">
+          <span class="d">Thu</span>
+          <span class="times"><span class="t">10:00 AM</span>–<span class="t">8:00 PM</span></span>
+          <span class="switch on" onclick="flipDay(this)"></span>
+        </div>
+        <div class="day-row2">
+          <span class="d">Fri</span>
+          <span class="times"><span class="t">10:00 AM</span>–<span class="t">8:00 PM</span></span>
+          <span class="switch on" onclick="flipDay(this)"></span>
+        </div>
+        <div class="day-row2">
+          <span class="d">Sat</span>
+          <span class="times"><span class="t">11:00 AM</span>–<span class="t">9:00 PM</span></span>
+          <span class="switch on" onclick="flipDay(this)"></span>
+        </div>
+        <div class="day-row2 closed">
+          <span class="d">Sun</span>
+          <span class="times"><span class="t">Closed</span></span>
+          <span class="switch" onclick="flipDay(this)"></span>
+        </div>
+      </div>
+
+      <div class="panel reveal d2">
+        <h2>Slot settings</h2>
+        <p class="sub">How your calendar offers times to patients.</p>
+
+        <div class="set-row">
+          <span class="lbl2"><strong>Slot length</strong><span>Shortest bookable visit</span></span>
+          <select><option>30 min</option><option>20 min</option><option>45 min</option><option>60 min</option></select>
+        </div>
+        <div class="set-row">
+          <span class="lbl2"><strong>Buffer between visits</strong><span>Time to reset the room</span></span>
+          <select><option>10 min</option><option>None</option><option>15 min</option><option>20 min</option></select>
+        </div>
+        <div class="set-row">
+          <span class="lbl2"><strong>Ladies-only hours</strong><span>2:00 – 5:00 PM daily</span></span>
+          <span class="switch on" onclick="flip(this)"></span>
+        </div>
+        <div class="set-row">
+          <span class="lbl2"><strong>Accept bookings automatically</strong><span>Skip the manual accept step</span></span>
+          <span class="switch" onclick="flip(this)"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-bar reveal">
+    <span>Changes are a demo — nothing is saved in this design preview.</span>
+    <button class="btn btn-primary" onclick="showToast()">Save changes</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#FFFBF7" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#FFFBF7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  Changes saved (demo)
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="cols">
+      <div>
+        <span class="brand">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8"/><path d="M12 10v7" stroke="#C9A27E" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Skin Care Hub
+        </span>
+        <p>A calm place to find and book trusted skin care and aesthetic clinics in Peshawar.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="clinics.html">Clinics</a></li>
+          <li><a href="index.html#treatments">Treatments</a></li>
+          <li><a href="index.html#how">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>For clinics</h5>
+        <ul>
+          <li><a href="join.html">Join the Hub</a></li>
+          <li><a href="dashboard.html">Clinic dashboard</a></li>
+          <li><a href="join.html#apply">Verification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Help centre</a></li>
+          <li><a href="#">Contact us</a></li>
+          <li><a href="#">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bar">
+      <span>© 2026 Skin Care Hub · Design concept with sample content only · <a href="screens.html" style="color:inherit;text-decoration:underline;">All screens</a> · <a href="admin.html" style="color:inherit;text-decoration:underline;">Admin console</a></span>
+      <span>Peshawar, Pakistan</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu(btn) {
+    btn.classList.toggle("open");
+    document.getElementById("mobileMenu").classList.toggle("open");
+  }
+  function flip(sw) {
+    sw.classList.toggle("on");
+    const row = sw.closest(".svc-row");
+    if (row) row.classList.toggle("off", !sw.classList.contains("on"));
+  }
+  function flipDay(sw) {
+    sw.classList.toggle("on");
+    sw.closest(".day-row2").classList.toggle("closed", !sw.classList.contains("on"));
+  }
+  function showToast() {
+    const t = document.getElementById("toast");
+    t.classList.add("show");
+    clearTimeout(t._h);
+    t._h = setTimeout(() => t.classList.remove("show"), 2200);
+  }
+
+  let pending = [...document.querySelectorAll(".reveal")];
+  function sweep() {
+    const vh = window.innerHeight;
+    pending = pending.filter((el) => {
+      if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add("in"); return false; }
+      return true;
+    });
+  }
+  window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
+  window.addEventListener("resize", sweep);
+  sweep();
+</script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script>SCH.require("clinic", "login.html?next=dashboard.html");</script>
+</body>
+</html>

@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Bookings — Skin Care Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=1">
+<style>
+  /* ---------- my bookings page only ---------- */
+
+  .bookings-wrap { max-width: 820px; margin: 0 auto; }
+
+  .page-head { padding: 44px 0 6px; }
+  .page-head h1 { font-size: clamp(30px, 4vw, 42px); margin: 12px 0 8px; }
+  .page-head p { color: var(--ink-soft); font-size: 16px; }
+
+  .profile-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-soft);
+    padding: 9px 20px 9px 10px;
+    margin-top: 20px;
+  }
+  .profile-chip .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--blush);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-head);
+    font-size: 17px;
+    color: var(--forest);
+  }
+  .profile-chip strong { display: block; font-size: 14.5px; color: var(--forest); line-height: 1.3; }
+  .profile-chip span { font-size: 12.5px; color: var(--ink-soft); }
+
+  .signout {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 11px 20px;
+    margin: 20px 0 0 10px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #B06A5B;
+    cursor: pointer;
+    vertical-align: top;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+  }
+  .signout:hover { background: var(--blush); border-color: rgba(176, 106, 91, 0.4); transform: translateY(-2px); }
+  @media (max-width: 560px) { .signout { margin-left: 0; } }
+
+  /* credits panel */
+  .credits-card {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: linear-gradient(115deg, var(--white) 55%, rgba(201, 162, 126, 0.12));
+    border: 1.5px solid rgba(201, 162, 126, 0.4);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 22px 26px;
+    margin-top: 26px;
+  }
+  .cc-score {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 0 0 auto;
+  }
+  .cc-score .ring {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(201, 162, 126, 0.16);
+    border: 2px solid rgba(201, 162, 126, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cc-score .ring svg { animation: bob 5s ease-in-out infinite; }
+  .cc-score strong {
+    display: block;
+    font-family: var(--font-head);
+    font-size: 30px;
+    line-height: 1;
+    color: var(--forest);
+  }
+  .cc-score em { font-style: normal; font-size: 13px; font-weight: 800; color: #9A7449; }
+  .cc-mid { flex: 1; min-width: 0; }
+  .cc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .cc-row strong { color: #9A7449; font-size: 13.5px; white-space: nowrap; }
+  .cc-bar {
+    height: 10px;
+    border-radius: 99px;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .cc-bar span {
+    display: block;
+    height: 100%;
+    width: 80%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #E2C9A8, var(--gold));
+    transition: width .8s cubic-bezier(.22,.8,.36,1);
+  }
+  .cc-earn { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .cc-earn span {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--forest);
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 5px 12px;
+  }
+  @media (max-width: 620px) {
+    .credits-card { flex-direction: column; align-items: stretch; gap: 16px; padding: 20px; }
+  }
+
+  /* tabs */
+  .seg {
+    display: flex;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 5px;
+    margin: 30px 0 26px;
+    max-width: 340px;
+  }
+  .seg .tab {
+    flex: 1;
+    text-align: center;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    padding: 10px 6px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background .25s ease, color .25s ease;
+    user-select: none;
+  }
+  .seg .tab.on { background: var(--forest); color: var(--white); }
+
+  /* booking cards */
+  .bk-card {
+    display: flex;
+    gap: 20px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 22px;
+    margin-bottom: 18px;
+    transition: transform .3s cubic-bezier(.22,.8,.36,1), box-shadow .3s ease;
+  }
+  .bk-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+  .bk-card .thumb {
+    width: 92px; height: 92px;
+    border-radius: 20px;
+    overflow: hidden;
+    flex: 0 0 92px;
+    background: linear-gradient(120deg, var(--blush), #EAD9C4);
+  }
+  .bk-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .bk-card .mid { flex: 1; min-width: 0; }
+  .bk-card h3 { font-size: 19px; }
+  .bk-card .treat { font-size: 14.5px; color: var(--ink-soft); margin: 2px 0 8px; }
+  .bk-card .when {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--forest);
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 6px 13px;
+  }
+  .bk-card .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .bk-card .actions .btn { padding: 9px 18px; font-size: 13.5px; animation: none; white-space: nowrap; }
+
+  /* inline review panel */
+  .review-box {
+    display: none;
+    width: 100%;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    margin-top: 16px;
+  }
+  .review-box.open { display: block; animation: dropIn .45s cubic-bezier(.22,.8,.36,1) both; }
+  .review-box h4 { font-size: 15.5px; color: var(--forest); margin-bottom: 4px; }
+  .review-box .hint { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 12px; }
+  .rate-drops { display: flex; gap: 6px; margin-bottom: 12px; }
+  .rate-drops button {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: transform .2s ease;
+  }
+  .rate-drops button:hover { transform: translateY(-2px) scale(1.1); }
+  .rate-drops svg path { stroke: #D8CFC2; fill: none; transition: all .2s ease; }
+  .rate-drops button.lit svg path { stroke: var(--gold); fill: var(--gold); }
+  .review-box textarea {
+    width: 100%;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--ink);
+    padding: 12px 14px;
+    min-height: 74px;
+    resize: vertical;
+    outline: none;
+    transition: border-color .2s ease;
+  }
+  .review-box textarea:focus { border-color: var(--sage); }
+  .review-box .row { display: flex; gap: 10px; margin-top: 12px; align-items: center; flex-wrap: wrap; }
+  .review-box .row .btn { padding: 10px 22px; font-size: 13.5px; animation: none; }
+  .review-thanks {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--forest);
+  }
+  .review-thanks svg { flex: 0 0 auto; }
+  .bk-card .actions .danger {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #B06A5B;
+    cursor: pointer;
+    padding: 9px 10px;
+    border-radius: var(--radius-pill);
+    transition: background .2s ease;
+  }
+  .bk-card .actions .danger:hover { background: var(--blush); }
+
+  .bk-card .side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 800;
+    padding: 6px 13px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+  .status .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .status.confirmed { background: rgba(110,154,130,0.14); color: var(--forest); }
+  .status.confirmed .dot { background: var(--sage); }
+  .status.pending { background: rgba(201,162,126,0.18); color: #9A7449; }
+  .status.pending .dot { background: var(--gold); }
+  .status.completed { background: #F1EDE6; color: var(--ink-soft); }
+  .status.completed .dot { background: #B6AFA5; }
+  .status.cancelled { background: var(--blush); color: #B06A5B; }
+  .status.cancelled .dot { background: #B06A5B; }
+  .bk-card .price { font-size: 15px; font-weight: 800; color: var(--forest); }
+
+  #pastList { display: none; }
+
+  .tip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--blush);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--forest);
+    margin: 28px 0 60px;
+  }
+  .tip svg { flex: 0 0 auto; animation: bob 4s ease-in-out infinite; }
+
+  @media (max-width: 620px) {
+    .bk-card { flex-wrap: wrap; }
+    .bk-card .thumb { width: 64px; height: 64px; flex-basis: 64px; border-radius: 16px; }
+    .bk-card .mid { flex: 1 1 60%; }
+    .bk-card .side {
+      flex-direction: row;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      order: 3;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+    .bk-card .actions .btn { flex: 1; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ambient drifting shapes -->
+<svg class="leaf-bg tr" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="#FCE8E4"/>
+  <path d="M190 70 C 240 100, 258 160, 228 230" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2" fill="none"/>
+</svg>
+<svg class="leaf-bg bl" width="300" height="300" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="rgba(110,154,130,0.12)"/>
+</svg>
+<svg class="curl-bg ml" width="300" height="360" viewBox="0 0 300 360" fill="none">
+  <path d="M-30 330 C 70 300, 150 240, 150 160 C 150 95, 90 70, 72 115 C 58 150, 100 170, 128 142" stroke="#6E9A82" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M-30 356 C 90 326, 186 254, 196 160" stroke="#C9A27E" stroke-opacity="0.3" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<svg class="curl-bg mr" width="320" height="400" viewBox="0 0 320 400" fill="none">
+  <path d="M340 50 C 240 80, 160 150, 168 240 C 174 310, 240 330, 254 284 C 265 248, 220 230, 194 260" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M350 20 C 230 54, 130 140, 120 250" stroke="#6E9A82" stroke-opacity="0.28" stroke-width="2" stroke-linecap="round"/>
+</svg>
+
+<!-- NAV -->
+<div class="site-nav-wrap">
+  <nav class="site-nav">
+    <a class="brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Skin Care Hub
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="clinics.html">Clinics</a></li>
+      <li><a href="index.html#treatments">Treatments</a></li>
+      <li><a href="index.html#how">How it works</a></li>
+      <li><a href="join.html">List your clinic</a></li>
+      <li><a href="login.html">Sign in</a></li>
+    </ul>
+    <a class="nav-credits" href="bookings.html" title="Your Hub credits">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8" fill="#C9A27E" fill-opacity="0.35"/></svg>
+      <b>240</b>&nbsp;credits
+    </a>
+    <a class="btn btn-primary" href="clinics.html" style="padding: 12px 26px; font-size: 15px;">Book Appointment</a>
+    <button class="burger" aria-label="Open menu" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="clinics.html">Clinics</a>
+    <a href="index.html#treatments">Treatments</a>
+    <a href="index.html#how">How it works</a>
+    <a href="join.html">List your clinic</a>
+    <a href="login.html">Sign in</a>
+    <a class="btn btn-primary" href="clinics.html">Book Appointment</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="bookings-wrap">
+
+    <div class="page-head reveal">
+      <span class="eyebrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.8"/></svg>
+        Your visits
+      </span>
+      <h1>My bookings</h1>
+      <p>Everything you've booked through the Hub, in one calm place.</p>
+      <div class="profile-chip">
+        <span class="avatar">S</span>
+        <span>
+          <strong>Sana Khan (sample)</strong>
+          <span>0345 1234567</span>
+        </span>
+      </div>
+      <button class="signout" onclick="signOut()" title="Sign out of the demo account">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M14 7V5.5A1.5 1.5 0 0 0 12.5 4h-6A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20h6a1.5 1.5 0 0 0 1.5-1.5V17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10 12h10m0 0-3-3m3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Sign out
+      </button>
+
+      <div class="credits-card reveal d1">
+        <div class="cc-score">
+          <span class="ring">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8" fill="#C9A27E" fill-opacity="0.35"/></svg>
+          </span>
+          <span>
+            <strong id="ccTotal">240</strong>
+            <em>Hub credits</em>
+          </span>
+        </div>
+        <div class="cc-mid">
+          <div class="cc-row">
+            <span id="ccToGo">60 credits to your next reward</span>
+            <strong>5% off at 300 · 10% off at 600</strong>
+          </div>
+          <div class="cc-bar"><span id="ccBar" style="width:80%"></span></div>
+          <div class="cc-earn">
+            <span>+200 welcome bonus</span>
+            <span>+50 complete a booking</span>
+            <span>+20 leave a review</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="seg reveal">
+      <span class="tab on" id="tabUp" onclick="setTab('up')">Upcoming · 2</span>
+      <span class="tab" id="tabPast" onclick="setTab('past')">Past · 2</span>
+    </div>
+
+    <!-- UPCOMING -->
+    <div id="upList"></div>
+
+    <!-- PAST -->
+    <div id="pastList"></div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="cols">
+      <div>
+        <span class="brand">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8"/><path d="M12 10v7" stroke="#C9A27E" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Skin Care Hub
+        </span>
+        <p>A calm place to find and book trusted skin care and aesthetic clinics in Peshawar.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="clinics.html">Clinics</a></li>
+          <li><a href="index.html#treatments">Treatments</a></li>
+          <li><a href="index.html#how">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>For clinics</h5>
+        <ul>
+          <li><a href="join.html">Join the Hub</a></li>
+          <li><a href="dashboard.html">Clinic dashboard</a></li>
+          <li><a href="clinic-profile.html">Verification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Help centre</a></li>
+          <li><a href="#">Contact us</a></li>
+          <li><a href="#">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bar">
+      <span>© 2026 Skin Care Hub · Design concept with sample content only · <a href="screens.html" style="color:inherit;text-decoration:underline;">All screens</a> · <a href="admin.html" style="color:inherit;text-decoration:underline;">Admin console</a></span>
+      <span>Peshawar, Pakistan</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function signOut() {
+    if (window.SCH) SCH.signOut();
+    window.location.href = "index.html";
+  }
+  function toggleMenu(btn) {
+    btn.classList.toggle("open");
+    document.getElementById("mobileMenu").classList.toggle("open");
+  }
+  function setTab(t) {
+    const up = t === "up";
+    document.getElementById("tabUp").classList.toggle("on", up);
+    document.getElementById("tabPast").classList.toggle("on", !up);
+    document.getElementById("upList").style.display = up ? "block" : "none";
+    document.getElementById("pastList").style.display = up ? "none" : "block";
+  }
+
+  /* ---------- live data rendering ---------- */
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+  const CAL = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="4" y="5.5" width="16" height="14.5" rx="4" stroke="#6E9A82" stroke-width="1.7"/><path d="M8 3.5v3M16 3.5v3M4 10h16" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round"/></svg>';
+  const STATUS = {
+    confirmed: '<span class="status confirmed"><span class="dot"></span>Confirmed</span>',
+    pending:   '<span class="status pending"><span class="dot"></span>Awaiting clinic</span>',
+    completed: '<span class="status completed"><span class="dot"></span>Completed</span>',
+    cancelled: '<span class="status cancelled"><span class="dot"></span>Cancelled</span>'
+  };
+  function cardHtml(b, isPast) {
+    const when = esc((b.day || "—") + " · " + (b.time || "—"));
+    let actions = "";
+    if (!isPast) {
+      actions = '<a class="btn btn-ghost" href="clinic.html">Reschedule</a>' +
+                '<button class="danger" data-cancel="' + b.id + '">Cancel</button>';
+    } else {
+      actions = '<a class="btn btn-primary" href="clinic.html" style="animation:none;">Book again</a>';
+      if (b.status === "completed" && !SCH.reviewFor(b.id)) {
+        actions += '<button class="btn btn-ghost" data-review="' + b.id + '">Leave a review</button>';
+      } else if (SCH.reviewFor(b.id)) {
+        actions += '<button class="btn btn-ghost" disabled style="opacity:.55;">Review sent · +20 credits</button>';
+      }
+    }
+    const reviewBox = (isPast && b.status === "completed" && !SCH.reviewFor(b.id)) ?
+      '<div class="review-box" id="rb-' + b.id + '">' +
+        '<h4>How was your visit?</h4>' +
+        '<div class="hint">Your review is shown publicly once the clinic visit is verified.</div>' +
+        '<div class="rate-drops" data-drops="' + b.id + '">' +
+          [1,2,3,4,5].map(n => '<button data-rate="' + n + '" aria-label="' + n + ' drops"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke-width="1.8"/></svg></button>').join("") +
+        '</div>' +
+        '<textarea placeholder="Tell others what the visit was like…"></textarea>' +
+        '<div class="row"><button class="btn btn-primary" data-submit="' + b.id + '">Submit review</button>' +
+        '<button class="btn btn-ghost" data-close="' + b.id + '">Cancel</button></div>' +
+      '</div>' : "";
+    return '<article class="bk-card">' +
+      '<span class="thumb"><img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=300&q=80&auto=format&fit=crop" alt="" onerror="this.remove()"></span>' +
+      '<div class="mid">' +
+        '<h3>' + esc(b.clinic) + '</h3>' +
+        '<div class="treat">' + esc(b.treatment) + ' · ' + b.mins + ' min · ' + esc(b.ref) + '</div>' +
+        '<span class="when">' + CAL + when + '</span>' +
+        '<div class="actions">' + actions + '</div>' + reviewBox +
+      '</div>' +
+      '<div class="side">' + (STATUS[b.status] || "") +
+        '<span class="price">' + (b.status === "cancelled" ? "—" : SCH.money(b.price)) + '</span>' +
+      '</div>' +
+    '</article>';
+  }
+  function emptyHtml(msg, cta) {
+    return '<div class="tip">' +
+      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.7"/></svg>' +
+      msg + (cta ? ' <a href="clinics.html" style="color:var(--forest);font-weight:800;">Browse clinics</a>' : "") +
+    '</div>';
+  }
+  function render() {
+    const all = SCH.myBookings();
+    const up = all.filter(b => b.status === "confirmed" || b.status === "pending");
+    const past = all.filter(b => b.status === "completed" || b.status === "cancelled");
+    document.getElementById("tabUp").textContent = "Upcoming · " + up.length;
+    document.getElementById("tabPast").textContent = "Past · " + past.length;
+    document.getElementById("upList").innerHTML =
+      (up.length ? up.map(b => cardHtml(b, false)).join("") : emptyHtml("No upcoming bookings yet.", true)) +
+      (up.length ? emptyHtml("Cancelling is free up to 12 hours before your appointment.") : "");
+    document.getElementById("pastList").innerHTML =
+      past.length ? past.map(b => cardHtml(b, true)).join("") : emptyHtml("Past visits will appear here after your appointments.");
+  }
+  function renderCredits() {
+    const u = SCH.user();
+    if (!u) return;
+    const total = u.credits || 0;
+    const next = total < 300 ? 300 : 600;
+    document.getElementById("ccTotal").textContent = total;
+    document.getElementById("ccToGo").textContent =
+      total >= next ? "Reward unlocked — 10% off your next booking" : (next - total) + " credits to your next reward";
+    document.getElementById("ccBar").style.width = Math.min(100, Math.round(total / next * 100)) + "%";
+    const navB = document.querySelector(".nav-credits b");
+    if (navB) navB.textContent = total;
+  }
+
+  const ratings = {};
+  document.addEventListener("click", function (e) {
+    const t = e.target.closest("[data-cancel],[data-review],[data-close],[data-rate],[data-submit]");
+    if (!t) return;
+    if (t.dataset.cancel) {
+      if (confirm("Cancel this booking? This cannot be undone.")) { SCH.cancelBooking(t.dataset.cancel); render(); }
+    } else if (t.dataset.review) {
+      document.getElementById("rb-" + t.dataset.review).classList.add("open");
+    } else if (t.dataset.close) {
+      document.getElementById("rb-" + t.dataset.close).classList.remove("open");
+    } else if (t.dataset.rate) {
+      const wrap = t.closest(".rate-drops");
+      ratings[wrap.dataset.drops] = +t.dataset.rate;
+      [...wrap.children].forEach((b, i) => b.classList.toggle("lit", i < +t.dataset.rate));
+    } else if (t.dataset.submit) {
+      const id = t.dataset.submit;
+      const box = document.getElementById("rb-" + id);
+      SCH.addReview(id, ratings[id] || 5, box.querySelector("textarea").value.trim());
+      renderCredits();
+      render();
+    }
+  });
+
+  window.addEventListener("DOMContentLoaded", function () {
+    if (!window.SCH) return;
+    const u = SCH.user();
+    if (!u) { window.location.replace("login.html?next=bookings.html"); return; }
+    const chip = document.querySelector(".profile-chip");
+    chip.querySelector(".avatar").textContent = (u.name || "?").charAt(0).toUpperCase();
+    const nameEl = chip.querySelector("strong");
+    nameEl.textContent = u.name;
+    if (nameEl.nextElementSibling) nameEl.nextElementSibling.textContent = u.phone || u.email || "";
+    renderCredits();
+    render();
+  });
+
+  let pending = [...document.querySelectorAll(".reveal")];
+  function sweep() {
+    const vh = window.innerHeight;
+    pending = pending.filter((el) => {
+      if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add("in"); return false; }
+      return true;
+    });
+  }
+  window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
+  window.addEventListener("resize", sweep);
+  sweep();
+</script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
+

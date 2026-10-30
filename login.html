@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — Skin Care Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=1">
+<style>
+  /* ---------- auth page only ---------- */
+
+  body { min-height: 100vh; display: flex; flex-direction: column; }
+
+  .auth-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1188px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 14px 24px;
+  }
+  .auth-bar .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition: color .2s ease;
+  }
+  .auth-bar .back:hover { color: var(--forest); }
+
+  .auth-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 24px 26px;
+  }
+  .auth-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: stretch;
+    width: 100%;
+    position: relative;
+  }
+  .auth-grid > .curl-hold { z-index: 0; }
+  .auth-visual, .auth-card { position: relative; z-index: 1; }
+
+  /* visual side */
+  .auth-visual {
+    position: relative;
+    border-radius: 36px;
+    overflow: hidden;
+    min-height: 480px;
+    box-shadow: var(--shadow-lift);
+    background: linear-gradient(120deg, var(--blush) 0%, #F6E3D2 40%, #EAD9C4 70%, var(--blush) 100%);
+    background-size: 220% 220%;
+    animation: shimmer 9s ease-in-out infinite;
+  }
+  .auth-visual img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .auth-visual .veil {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(47,74,60,0) 30%, rgba(47,74,60,0.75) 100%);
+  }
+  .auth-visual .caption {
+    position: absolute;
+    left: 32px; right: 32px; bottom: 30px;
+    color: var(--cream);
+  }
+  .auth-visual .caption .mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--font-head);
+    font-size: 19px;
+    margin-bottom: 10px;
+  }
+  .auth-visual .caption .mark svg { animation: bob 5s ease-in-out infinite; }
+  .auth-visual .caption p {
+    font-family: var(--font-head);
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.25;
+  }
+  .auth-visual .pill {
+    position: absolute;
+    top: 26px; left: 26px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.92);
+    border-radius: var(--radius-pill);
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--forest);
+    animation: bob 6s ease-in-out infinite;
+  }
+
+  /* form side */
+  .auth-card {
+    background: var(--white);
+    border-radius: 36px;
+    box-shadow: var(--shadow-soft);
+    padding: 34px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .auth-card h1 { font-size: clamp(24px, 2.4vw, 29px); margin-bottom: 6px; }
+  .auth-card .sub { color: var(--ink-soft); font-size: 14.5px; margin-bottom: 18px; }
+
+  .tabs {
+    display: flex;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 5px;
+    margin-bottom: 18px;
+  }
+  .tab {
+    flex: 1;
+    text-align: center;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    padding: 9px 6px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background .25s ease, color .25s ease;
+    user-select: none;
+  }
+  .tab.on { background: var(--forest); color: var(--white); }
+
+  .auth-card .field { margin-bottom: 14px; }
+
+  .method-seg {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .method-seg .m {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 11px 8px;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, color .2s ease, transform .2s ease;
+    user-select: none;
+  }
+  .method-seg .m:hover { transform: translateY(-2px); border-color: var(--sage); }
+  .method-seg .m.on {
+    background: rgba(110, 154, 130, 0.1);
+    border-color: var(--sage);
+    color: var(--forest);
+  }
+  .forgot-row { text-align: right; margin-top: 7px; }
+  .forgot-row a { font-size: 13px; font-weight: 800; color: var(--sage); text-decoration: none; }
+  .forgot-row a:hover { text-decoration: underline; }
+  .auth-card .btn-primary { width: 100%; margin-top: 6px; }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 700;
+    margin: 14px 0;
+  }
+  .divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .alt-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 11px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--forest);
+    cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .alt-btn:hover { border-color: var(--sage); transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+
+  .terms {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 14px;
+  }
+  .terms a { color: var(--sage); font-weight: 700; text-decoration: none; }
+  .terms a:hover { text-decoration: underline; }
+
+  /* otp */
+  #otpView { display: none; }
+  #otpView.show { display: block; animation: dropIn .5s cubic-bezier(.22,.8,.36,1) both; }
+  .otp-row { display: flex; gap: 12px; justify-content: center; margin: 24px 0 8px; }
+  .otp-box {
+    width: 58px; height: 64px;
+    text-align: center;
+    font-family: var(--font-head);
+    font-size: 26px;
+    color: var(--forest);
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .otp-box:focus {
+    border-color: var(--sage);
+    box-shadow: 0 0 0 4px rgba(110, 154, 130, 0.14);
+  }
+  .resend {
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 14px 0 6px;
+  }
+  .resend a { color: var(--sage); font-weight: 800; text-decoration: none; }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    cursor: pointer;
+    margin-bottom: 14px;
+    transition: color .2s ease;
+  }
+  .back-link:hover { color: var(--forest); }
+
+  #signupView { display: none; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  @media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+
+  .auth-foot {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding: 12px;
+  }
+
+  @media (max-width: 860px) {
+    .auth-grid { grid-template-columns: 1fr; }
+    .auth-visual { display: none; }
+    .auth-card { padding: 32px 24px; box-shadow: var(--shadow-lift); }
+    .auth-main { align-items: flex-start; }
+  }
+
+  /* shorter laptop screens (incl. Windows 125% zoom) — tighten so the card fits */
+  @media (max-height: 850px) and (min-width: 861px) {
+    .auth-bar { padding: 10px 24px; }
+    .auth-card { padding: 22px 34px; }
+    .auth-card h1 { font-size: 22px; margin-bottom: 4px; }
+    .auth-card .sub { font-size: 13.5px; margin-bottom: 13px; }
+    .tabs { margin-bottom: 13px; }
+    .tab { padding: 8px 6px; font-size: 13.5px; }
+    .method-seg { margin-bottom: 12px; }
+    .method-seg .m { padding: 9px 8px; }
+    .auth-card .field { margin-bottom: 10px; }
+    .auth-card .field input { padding: 11px 14px; font-size: 14.5px; }
+    .auth-card .field label { font-size: 13px; }
+    .forgot-row { margin-top: 5px; }
+    .divider { margin: 11px 0; }
+    .alt-btn { padding: 10px; font-size: 14px; }
+    .terms { margin-top: 10px; font-size: 11.5px; }
+    .auth-visual { min-height: 400px; }
+    .auth-main { padding-bottom: 14px; }
+    .auth-foot { padding: 7px; font-size: 12px; }
+  }
+
+  /* signup success */
+  #doneView { display: none; text-align: center; }
+  #doneView.show { display: block; animation: dropIn .5s cubic-bezier(.22,.8,.36,1) both; }
+  .done-icon {
+    width: 76px; height: 76px;
+    margin: 4px auto 18px;
+    border-radius: 50%;
+    background: rgba(110, 154, 130, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bob 5s ease-in-out infinite;
+  }
+  .credit-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: rgba(201, 162, 126, 0.16);
+    border: 1.5px solid rgba(201, 162, 126, 0.45);
+    border-radius: var(--radius-pill);
+    padding: 10px 20px;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #9A7449;
+    margin: 6px 0 20px;
+  }
+  #doneView .btn { width: 100%; margin-top: 10px; animation: none; }
+</style>
+</head>
+<body>
+
+<!-- ambient drifting shapes -->
+<svg class="leaf-bg tr" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="#FCE8E4"/>
+  <path d="M190 70 C 240 100, 258 160, 228 230" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2" fill="none"/>
+</svg>
+<svg class="leaf-bg bl" width="300" height="300" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="rgba(110,154,130,0.12)"/>
+</svg>
+<svg class="curl-bg ml" width="300" height="360" viewBox="0 0 300 360" fill="none">
+  <path d="M-30 330 C 70 300, 150 240, 150 160 C 150 95, 90 70, 72 115 C 58 150, 100 170, 128 142" stroke="#6E9A82" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M-30 356 C 90 326, 186 254, 196 160" stroke="#C9A27E" stroke-opacity="0.3" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<svg class="curl-bg mr" width="320" height="400" viewBox="0 0 320 400" fill="none">
+  <path d="M340 50 C 240 80, 160 150, 168 240 C 174 310, 240 330, 254 284 C 265 248, 220 230, 194 260" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M350 20 C 230 54, 130 140, 120 250" stroke="#6E9A82" stroke-opacity="0.28" stroke-width="2" stroke-linecap="round"/>
+</svg>
+
+<!-- top bar -->
+<div class="auth-bar">
+  <a class="brand" href="index.html">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Skin Care Hub
+  </a>
+  <a class="back" href="index.html">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back to home
+  </a>
+</div>
+
+<main class="auth-main">
+  <div class="auth-grid">
+
+    <!-- curly line holding the card -->
+    <svg class="curl-hold" style="top:-54px; right:-40px;" width="240" height="190" viewBox="0 0 240 190" fill="none">
+      <path d="M10 170 C 60 90, 140 40, 226 54 C 262 60, 250 104, 214 96 C 186 90, 192 58, 222 56" stroke="#C9A27E" stroke-opacity="0.5" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M-6 188 C 52 106, 132 58, 216 66" stroke="#6E9A82" stroke-opacity="0.35" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <svg class="curl-hold" style="bottom:-46px; left:-44px; animation-delay:-4s;" width="230" height="160" viewBox="0 0 230 160" fill="none">
+      <path d="M224 24 C 160 86, 90 122, 14 112 C -20 107, -6 66, 26 74 C 52 80, 46 110, 18 110" stroke="#6E9A82" stroke-opacity="0.45" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M236 4 C 170 72, 96 112, 20 104" stroke="#C9A27E" stroke-opacity="0.32" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+
+    <!-- visual -->
+    <div class="auth-visual reveal">
+      <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&q=80&auto=format&fit=crop" alt="Calm facial treatment" onerror="this.remove()">
+      <div class="veil"></div>
+      <span class="pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#2F4A3C" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Verified clinics only
+      </span>
+      <div class="caption">
+        <span class="mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#FFFBF7" stroke-width="1.8"/><path d="M12 10v7" stroke="#FFFBF7" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Skin Care Hub
+        </span>
+        <p>Book your next treatment in minutes — and walk in relaxed.</p>
+      </div>
+    </div>
+
+    <!-- form card -->
+    <div class="auth-card reveal d1">
+
+      <!-- PHONE STEP -->
+      <div id="phoneView">
+        <h1 id="authTitle">Welcome back</h1>
+        <p class="sub" id="authSub">Sign in with email and password, your phone number, or Google.</p>
+
+        <div class="tabs">
+          <span class="tab on" id="tabIn" onclick="setMode('in')">Sign in</span>
+          <span class="tab" id="tabUp" onclick="setMode('up')">Create account</span>
+        </div>
+
+        <div id="signinView">
+          <div class="method-seg">
+            <span class="m on" id="mEmail" onclick="setMethod('email')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5.5" width="17" height="13" rx="3.5" stroke="currentColor" stroke-width="1.7"/><path d="M4.5 7.5l7.5 5.5 7.5-5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Email &amp; password
+            </span>
+            <span class="m" id="mPhone" onclick="setMethod('phone')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="7" y="3" width="10" height="18" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M11 17.5h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Phone &amp; code
+            </span>
+          </div>
+
+          <div id="emailForm">
+            <div class="field">
+              <label>Email</label>
+              <input type="text" id="inEmail" placeholder="you@example.com">
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" id="inPass" placeholder="••••••••">
+              <div class="forgot-row"><a href="#" onclick="return false;">Forgot password?</a></div>
+            </div>
+          </div>
+
+          <div id="phoneForm" style="display:none;">
+            <div class="field">
+              <label>Phone number</label>
+              <input type="text" id="inPhone" placeholder="03XX XXXXXXX">
+              <div class="hint" style="font-size:13px;color:var(--ink-soft);margin-top:6px;">We'll text you a 4-digit code — no password needed.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="signupView">
+          <div class="two-col">
+            <div class="field">
+              <label>Full name</label>
+              <input type="text" id="upName" placeholder="e.g. Sana Khan">
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="text" id="upEmail" placeholder="you@example.com">
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" id="upPass" placeholder="At least 8 characters">
+            </div>
+            <div class="field">
+              <label>Phone number</label>
+              <input type="text" id="upPhone" placeholder="03XX XXXXXXX">
+            </div>
+          </div>
+          <div class="hint" style="font-size:13px;color:var(--ink-soft);margin:-4px 0 10px;">Your number is used for booking confirmations by SMS or WhatsApp.</div>
+        </div>
+
+        <div id="authErr" style="display:none;background:var(--blush);color:#B06A5B;font-size:13.5px;font-weight:700;border-radius:14px;padding:11px 16px;margin-bottom:12px;"></div>
+
+        <button class="btn btn-primary" id="primaryBtn" onclick="primaryAction()">Sign in</button>
+
+        <div class="divider">or</div>
+        <button class="alt-btn" onclick="googleDemo(this)">
+          <svg width="18" height="18" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.1 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.4 17.7 9.5 24 9.5Z"/>
+            <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7.1l7.4 5.7c4.3-4 7.1-9.9 7.1-17.3Z"/>
+            <path fill="#FBBC05" d="M10.4 28.7a14.5 14.5 0 0 1 0-9.4l-7.8-6.1a24 24 0 0 0 0 21.6l7.8-6.1Z"/>
+            <path fill="#34A853" d="M24 48c6.1 0 11.2-2 15-5.4l-7.4-5.7c-2.1 1.4-4.7 2.2-7.6 2.2-6.3 0-11.7-3.9-13.6-9.8l-7.8 6.1C6.5 42.6 14.6 48 24 48Z"/>
+          </svg>
+          <span id="googleLbl">Continue with Google</span>
+        </button>
+
+        <p class="terms">By continuing you agree to our <a href="#">Terms</a> and <a href="#">Privacy policy</a>.</p>
+        <p class="terms" style="margin-top:8px;">Demo accounts — patient: <strong>sana@demo.pk / sana123</strong> · clinic: <strong>clinic@demo.pk / clinic123</strong> · admin: <strong>admin@demo.pk / admin123</strong></p>
+      </div>
+
+      <!-- OTP STEP -->
+      <div id="otpView">
+        <span class="back-link" onclick="hideOtp()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Change number
+        </span>
+        <h1>Enter the code</h1>
+        <p class="sub">We sent a 4-digit code to <strong style="color:var(--forest);" id="otpPhone">your number</strong>.</p>
+        <div class="otp-row">
+          <input class="otp-box" maxlength="1" inputmode="numeric">
+          <input class="otp-box" maxlength="1" inputmode="numeric">
+          <input class="otp-box" maxlength="1" inputmode="numeric">
+          <input class="otp-box" maxlength="1" inputmode="numeric">
+        </div>
+        <div class="resend">Didn't get it? <a href="#" onclick="return false;">Resend code</a> · 0:28</div>
+        <div id="otpErr" style="display:none;background:var(--blush);color:#B06A5B;font-size:13.5px;font-weight:700;border-radius:14px;padding:11px 16px;margin-bottom:12px;"></div>
+        <button class="btn btn-primary" onclick="verifyOtp(this)">Verify &amp; continue</button>
+        <p class="terms">Demo build — no real SMS is sent, any 4-digit code works.</p>
+      </div>
+
+      <!-- SIGNUP SUCCESS STEP -->
+      <div id="doneView">
+        <div class="done-icon">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M9.3 13.4l2 2 3.6-4" stroke="#6E9A82" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h1>Your account is ready</h1>
+        <p class="sub" id="doneSub">Welcome to the Hub. You earn credits every time you book or review — collect 300 and your next booking is 5% off.</p>
+        <div class="credit-chip">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8" fill="#C9A27E" fill-opacity="0.35"/></svg>
+          +200 welcome credits added
+        </div>
+        <a class="btn btn-primary" href="clinics.html">Browse clinics &amp; book</a>
+        <a class="btn btn-ghost" href="bookings.html">Go to my bookings</a>
+        <p class="terms">Your account is stored on this device (demo build — no server yet).</p>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<div class="auth-foot">© 2026 Skin Care Hub · Design concept with sample content only · Peshawar, Pakistan</div>
+
+<script>
+  let mode = "in", method = "email";
+  function refresh() {
+    const isIn = mode === "in";
+    document.getElementById("tabIn").classList.toggle("on", isIn);
+    document.getElementById("tabUp").classList.toggle("on", !isIn);
+    document.getElementById("signinView").style.display = isIn ? "block" : "none";
+    document.getElementById("signupView").style.display = isIn ? "none" : "block";
+    document.getElementById("authTitle").textContent = isIn ? "Welcome back" : "Create your account";
+    document.getElementById("authSub").textContent = isIn
+      ? "Sign in with email and password, your phone number, or Google."
+      : "Your name, email and password — plus your number for booking SMS.";
+    document.getElementById("googleLbl").textContent = isIn ? "Continue with Google" : "Sign up with Google";
+    document.getElementById("mEmail").classList.toggle("on", method === "email");
+    document.getElementById("mPhone").classList.toggle("on", method === "phone");
+    document.getElementById("emailForm").style.display = method === "email" ? "block" : "none";
+    document.getElementById("phoneForm").style.display = method === "phone" ? "block" : "none";
+    document.getElementById("primaryBtn").textContent =
+      !isIn ? "Create account" : (method === "email" ? "Sign in" : "Send code");
+  }
+  function setMode(m) { mode = m; refresh(); }
+  function setMethod(m) { method = m; refresh(); }
+  refresh();
+  if (location.hash === "#signup") { mode = "up"; refresh(); }
+  const nextUrl = (() => {
+    try {
+      const n = new URLSearchParams(location.search).get("next");
+      return n && /^[a-z-]+\.html$/.test(n) ? n : null;
+    } catch (e) { return null; }
+  })();
+  let pendingPhone = "";
+  function err(id, msg) {
+    const e = document.getElementById(id);
+    if (!msg) { e.style.display = "none"; return; }
+    e.textContent = msg;
+    e.style.display = "block";
+  }
+  function destFor(u) {
+    if (u.role === "clinic") return "dashboard.html";
+    if (u.role === "admin") return "admin.html";
+    return nextUrl || "bookings.html";
+  }
+  function primaryAction() {
+    err("authErr", "");
+    if (mode === "in" && method === "phone") {
+      const phone = document.getElementById("inPhone").value;
+      if (String(phone).replace(/\D/g, "").length < 10) { err("authErr", "Enter a valid phone number (03XX XXXXXXX)."); return; }
+      pendingPhone = phone;
+      document.getElementById("otpPhone").textContent = phone;
+      showOtp(); return;
+    }
+    if (mode === "up") {
+      const r = SCH.signUp(
+        document.getElementById("upName").value,
+        document.getElementById("upEmail").value,
+        document.getElementById("upPass").value,
+        document.getElementById("upPhone").value
+      );
+      if (!r.ok) { err("authErr", r.error); return; }
+      showDone(r.user); return;
+    }
+    const r = SCH.signIn(document.getElementById("inEmail").value, document.getElementById("inPass").value);
+    if (!r.ok) { err("authErr", r.error); return; }
+    signedIn(document.getElementById("primaryBtn"), r.user);
+  }
+  function signedIn(btn, u) {
+    btn.textContent = "Signed in — taking you there…";
+    setTimeout(() => { window.location.href = destFor(u); }, 700);
+  }
+  function verifyOtp(btn) {
+    err("otpErr", "");
+    const code = [...document.querySelectorAll(".otp-box")].map(b => b.value).join("");
+    if (code.length < 4) { err("otpErr", "Enter the 4-digit code."); return; }
+    const r = SCH.signInPhone(pendingPhone);
+    if (!r.ok) { err("otpErr", r.error); return; }
+    signedIn(btn, r.user);
+  }
+  function showDone(u) {
+    document.getElementById("doneSub").textContent =
+      "Welcome to the Hub, " + u.name.split(" ")[0] + ". You earn credits every time you book or review — collect 300 and your next booking is 5% off.";
+    document.getElementById("phoneView").style.display = "none";
+    document.getElementById("doneView").classList.add("show");
+    if (nextUrl) {
+      const b = document.querySelector("#doneView .btn-primary");
+      b.textContent = "Continue your booking";
+      b.href = nextUrl;
+    }
+    window.scrollTo(0, 0);
+  }
+  function googleDemo(btn) {
+    const lbl = document.getElementById("googleLbl");
+    const old = lbl.textContent;
+    lbl.textContent = "Google sign-in is a demo in this preview";
+    setTimeout(() => { lbl.textContent = old; }, 2000);
+  }
+  function showOtp() {
+    document.getElementById("phoneView").style.display = "none";
+    document.getElementById("otpView").classList.add("show");
+    document.querySelector(".otp-box").focus();
+  }
+  function hideOtp() {
+    document.getElementById("otpView").classList.remove("show");
+    document.getElementById("phoneView").style.display = "block";
+  }
+  // auto-advance otp boxes (demo)
+  document.querySelectorAll(".otp-box").forEach((b, i, all) => {
+    b.addEventListener("input", () => { if (b.value && all[i + 1]) all[i + 1].focus(); });
+    b.addEventListener("keydown", (e) => { if (e.key === "Backspace" && !b.value && all[i - 1]) all[i - 1].focus(); });
+  });
+
+  let pending = [...document.querySelectorAll(".reveal")];
+  function sweep() {
+    const vh = window.innerHeight;
+    pending = pending.filter((el) => {
+      if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add("in"); return false; }
+      return true;
+    });
+  }
+  window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
+  window.addEventListener("resize", sweep);
+  sweep();
+</script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

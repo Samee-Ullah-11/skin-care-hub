@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinic Profile — Skin Care Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=1">
+<style>
+  /* ---------- clinic profile editor only ---------- */
+
+  .dash-head { padding: 40px 0 0; }
+  .dash-head h1 { font-size: clamp(28px, 3.6vw, 38px); margin: 10px 0 4px; }
+  .dash-head .date { color: var(--ink-soft); font-size: 15px; }
+  .clinic-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-soft);
+    padding: 9px 20px 9px 10px;
+  }
+  .clinic-chip .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--blush);
+    flex: 0 0 40px;
+  }
+  .clinic-chip .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .clinic-chip strong { display: block; font-size: 14.5px; color: var(--forest); line-height: 1.3; }
+  .clinic-chip span { font-size: 12.5px; color: var(--sage); font-weight: 700; }
+
+  .sub-nav {
+    display: flex;
+    gap: 8px;
+    margin: 26px 0 30px;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 5px;
+    max-width: fit-content;
+  }
+  .sub-nav a {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    transition: background .25s ease, color .25s ease;
+    white-space: nowrap;
+  }
+  .sub-nav a.on { background: var(--forest); color: var(--white); }
+  .sub-nav a:not(.on):hover { color: var(--forest); background: var(--blush); }
+
+  .prof-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 26px;
+    align-items: start;
+    margin-bottom: 70px;
+  }
+  .prof-grid > div { min-width: 0; }
+  .panel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .panel h2 { font-size: 21px; margin-bottom: 6px; }
+  .panel .sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 18px; }
+  .panel .field { margin-bottom: 18px; }
+  .panel textarea {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 18px;
+    outline: none;
+    resize: vertical;
+    min-height: 96px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .panel textarea:focus {
+    border-color: var(--sage);
+    box-shadow: 0 0 0 4px rgba(110, 154, 130, 0.14);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+  /* photos */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 14px;
+  }
+  .ph-tile {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: linear-gradient(120deg, var(--blush), #EAD9C4);
+  }
+  .ph-tile img { width: 100%; height: 100%; object-fit: cover; }
+  .ph-tile .cover-tag {
+    position: absolute;
+    bottom: 8px; left: 8px;
+    background: rgba(255,255,255,0.92);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--forest);
+    border-radius: var(--radius-pill);
+    padding: 4px 10px;
+  }
+  .ph-tile .rm {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 28px; height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    color: #B06A5B;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    line-height: 1;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .ph-tile .rm:hover { transform: scale(1.1); background: var(--white); }
+  .ph-add {
+    aspect-ratio: 4 / 3;
+    border: 2px dashed var(--line);
+    border-radius: var(--radius-md);
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--sage);
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+  }
+  .ph-add:hover { border-color: var(--sage); background: #FDFAF5; transform: translateY(-2px); }
+  .ph-add svg { animation: bob 4s ease-in-out infinite; }
+
+  /* amenities */
+  .am-chips { display: flex; flex-wrap: wrap; gap: 9px; }
+  .am {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    padding: 9px 16px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: all .2s ease;
+    user-select: none;
+  }
+  .am:hover { transform: translateY(-2px); border-color: var(--sage); }
+  .am.on { background: var(--forest); border-color: var(--forest); color: var(--white); }
+  .am.on svg path, .am.on svg rect { stroke: #FFFBF7; }
+
+  /* verification */
+  .ver-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: rgba(110, 154, 130, 0.08);
+    border: 1px solid rgba(110, 154, 130, 0.25);
+    border-radius: 16px;
+    padding: 13px 16px;
+    margin-bottom: 18px;
+  }
+  .ver-meta { font-size: 13.5px; color: var(--ink-soft); }
+  .doc-upload { aspect-ratio: auto; padding: 18px; flex-direction: row; }
+  .ver-note { font-size: 13px; color: var(--ink-soft); margin-top: 14px; }
+  .ver-note a { color: var(--sage); font-weight: 800; text-decoration: none; }
+  .ver-note a:hover { text-decoration: underline; }
+
+  /* visibility switch */
+  .switch {
+    position: relative;
+    width: 46px; height: 26px;
+    background: #E8E0D5;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background .25s ease;
+    flex: 0 0 46px;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--white);
+    box-shadow: 0 2px 6px rgba(47,74,60,0.2);
+    transition: transform .25s cubic-bezier(.22,.8,.36,1);
+  }
+  .switch.on { background: var(--sage); }
+  .switch.on::after { transform: translateX(20px); }
+  .vis-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .vis-row .lbl2 strong { display: block; font-size: 14.5px; color: var(--forest); }
+  .vis-row .lbl2 span { font-size: 12.5px; color: var(--ink-soft); }
+
+  /* preview card */
+  .preview-wrap { position: sticky; top: 110px; }
+  .preview-lbl {
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 12px;
+  }
+  .prev-note { font-size: 13px; color: var(--ink-soft); margin-top: 14px; }
+  .prev-note a { color: var(--sage); font-weight: 800; text-decoration: none; }
+
+  /* save bar + toast */
+  .save-bar {
+    position: sticky;
+    bottom: 18px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-lift);
+    padding: 12px 12px 12px 24px;
+    margin-bottom: 40px;
+  }
+  .save-bar span { font-size: 14px; color: var(--ink-soft); }
+  .save-bar .btn { padding: 12px 28px; font-size: 15px; }
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translate(-50%, 80px);
+    background: var(--forest);
+    color: var(--cream);
+    font-size: 14.5px;
+    font-weight: 700;
+    padding: 14px 24px;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-lift);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transition: transform .4s cubic-bezier(.22,.8,.36,1), opacity .4s ease;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+  @media (max-width: 980px) {
+    .prof-grid { grid-template-columns: 1fr; }
+    .preview-wrap { position: static; }
+  }
+  @media (max-width: 860px) {
+    .site-nav .clinic-chip { padding: 5px; }
+    .site-nav .clinic-chip > span:last-child { display: none; }
+  }
+  @media (max-width: 620px) {
+    .panel { padding: 22px 18px; }
+    .form-row { grid-template-columns: 1fr; }
+    .save-bar span { display: none; }
+    .save-bar { justify-content: center; padding: 10px; }
+    .save-bar .btn { width: 100%; }
+    .sub-nav { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+    .sub-nav::-webkit-scrollbar { display: none; }
+  }
+  .sub-nav .l-short { display: none; }
+  @media (max-width: 620px) {
+    .sub-nav { max-width: 100%; justify-content: space-between; gap: 4px; }
+    .sub-nav a { padding: 10px 13px; font-size: 13px; flex: 1; text-align: center; }
+    .sub-nav .l-full { display: none; }
+    .sub-nav .l-short { display: inline; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ambient drifting shapes -->
+<svg class="leaf-bg tr" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="#FCE8E4"/>
+  <path d="M190 70 C 240 100, 258 160, 228 230" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2" fill="none"/>
+</svg>
+<svg class="leaf-bg bl" width="300" height="300" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="rgba(110,154,130,0.12)"/>
+</svg>
+<svg class="curl-bg ml" width="300" height="360" viewBox="0 0 300 360" fill="none">
+  <path d="M-30 330 C 70 300, 150 240, 150 160 C 150 95, 90 70, 72 115 C 58 150, 100 170, 128 142" stroke="#6E9A82" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M-30 356 C 90 326, 186 254, 196 160" stroke="#C9A27E" stroke-opacity="0.3" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<svg class="curl-bg mr" width="320" height="400" viewBox="0 0 320 400" fill="none">
+  <path d="M340 50 C 240 80, 160 150, 168 240 C 174 310, 240 330, 254 284 C 265 248, 220 230, 194 260" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M350 20 C 230 54, 130 140, 120 250" stroke="#6E9A82" stroke-opacity="0.28" stroke-width="2" stroke-linecap="round"/>
+</svg>
+
+<!-- NAV -->
+<div class="site-nav-wrap">
+  <nav class="site-nav">
+    <a class="brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Skin Care Hub
+    </a>
+    <ul class="nav-links">
+      <li><a href="dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="clinic.html?preview=1">Public page</a></li>
+      <li><a href="index.html" style="color:#B06A5B;" title="Sign out" onclick="if(window.SCH)SCH.signOut()">Sign out</a></li>
+    </ul>
+    <span class="clinic-chip">
+      <span class="avatar">
+        <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=120&q=80&auto=format&fit=crop" alt="" onerror="this.remove()">
+      </span>
+      <span>
+        <strong>Sample Skin Clinic</strong>
+        <span>● Verified</span>
+      </span>
+    </span>
+    <button class="burger" aria-label="Open menu" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="clinic.html?preview=1">Public page</a>
+    <a href="index.html" style="color:#B06A5B;" onclick="if(window.SCH)SCH.signOut()">Sign out</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="dash-head reveal">
+    <span class="eyebrow">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.8"/></svg>
+      Clinic dashboard · sample data
+    </span>
+    <h1>Clinic profile</h1>
+    <div class="date">What patients see on your public page.</div>
+
+    <div class="sub-nav">
+      <a href="dashboard.html">Overview</a>
+      <a href="services.html"><span class="l-full">Services &amp; schedule</span><span class="l-short">Services</span></a>
+      <a href="clinic-profile.html" class="on"><span class="l-full">Clinic profile</span><span class="l-short">Profile</span></a>
+    </div>
+  </div>
+
+  <div class="prof-grid">
+
+    <!-- LEFT: edit panels -->
+    <div>
+      <div class="panel reveal">
+        <h2>Basics</h2>
+        <p class="sub">Your name and story, in your own words.</p>
+        <div class="form-row">
+          <div class="field">
+            <label>Clinic name</label>
+            <input type="text" id="nameInput" value="Sample Skin Clinic" oninput="syncPreview()">
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input type="text" value="091 1234567">
+          </div>
+        </div>
+        <div class="field">
+          <label>About your clinic</label>
+          <textarea>Sample description for design review: a calm, hygiene-first skin care clinic offering dermatologist-led facials, laser treatments and skin consultations.</textarea>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Area</label>
+            <select>
+              <option>Hayatabad</option>
+              <option>University Town</option>
+              <option>Saddar</option>
+              <option>Gulbahar</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Address</label>
+            <input type="text" value="Street 12, Hayatabad Phase 3">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel reveal">
+        <h2>Photos</h2>
+        <p class="sub">The first photo is your cover. Bright, real photos get more bookings.</p>
+        <div class="photo-grid">
+          <div class="ph-tile">
+            <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&q=80&auto=format&fit=crop" alt="" onerror="this.remove()">
+            <span class="cover-tag">Cover</span>
+            <button class="rm" onclick="this.closest('.ph-tile').remove()" aria-label="Remove">×</button>
+          </div>
+          <div class="ph-tile">
+            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80&auto=format&fit=crop" alt="" onerror="this.remove()">
+            <button class="rm" onclick="this.closest('.ph-tile').remove()" aria-label="Remove">×</button>
+          </div>
+          <div class="ph-tile">
+            <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=400&q=80&auto=format&fit=crop" alt="" onerror="this.remove()">
+            <button class="rm" onclick="this.closest('.ph-tile').remove()" aria-label="Remove">×</button>
+          </div>
+          <div class="ph-add">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 16v-5M9.8 12.8L12 10.5l2.2 2.3" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Add photo
+          </div>
+        </div>
+      </div>
+
+      <div class="panel reveal">
+        <h2>Amenities</h2>
+        <p class="sub">Tap to show what your clinic offers — these appear as chips on your page.</p>
+        <div class="am-chips">
+          <span class="am on" onclick="this.classList.toggle('on')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            PMC-licensed staff
+          </span>
+          <span class="am on" onclick="this.classList.toggle('on')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 20.5s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7.6a4.5 4.5 0 0 1 7.5 2.9c0 5.4-7.5 10-7.5 10Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            Ladies-only hours
+          </span>
+          <span class="am on" onclick="this.classList.toggle('on')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 21c-4-1.5-7-5-7-9.5C8 10 10.5 8 12 4c1.5 4 4 6 7 7.5 0 4.5-3 8-7 9.5Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            Sterile single-use kits
+          </span>
+          <span class="am on" onclick="this.classList.toggle('on')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 19c2-5 4.5-8 7-10M12 9c2.5 2 5 5 7 10" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round"/><path d="M12 9c-1.5-1.8-1.5-4 0-5.5C13.5 5 13.5 7.2 12 9Z" stroke="#6E9A82" stroke-width="1.6"/></svg>
+            Parking available
+          </span>
+          <span class="am" onclick="this.classList.toggle('on')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="4" y="6" width="16" height="12" rx="3" stroke="#6E9A82" stroke-width="1.7"/><path d="M4 10h16" stroke="#6E9A82" stroke-width="1.7"/></svg>
+            Card payment
+          </span>
+          <span class="am" onclick="this.classList.toggle('on')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#6E9A82" stroke-width="1.7"/><path d="M8 12.5h8M12 8.5v8" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Wheelchair access
+          </span>
+        </div>
+      </div>
+
+      <div class="panel reveal" id="verifyPanel">
+        <h2>Verification</h2>
+        <p class="sub">Your license is checked before listing and whenever it changes — it is never shown publicly.</p>
+
+        <div class="ver-status">
+          <span class="badge badge-verified">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#2F4A3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Verified
+          </span>
+          <span class="ver-meta">Verified on 12 Aug 2026 · License PMC-•••••42 (sample)</span>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>PMC / practice license number</label>
+            <input type="text" value="PMC-1234542" >
+          </div>
+          <div class="field">
+            <label>License expiry</label>
+            <input type="text" value="31 Dec 2027">
+          </div>
+        </div>
+        <div class="field">
+          <label>License document</label>
+          <div class="ph-add doc-upload">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 16v-5M9.8 12.8L12 10.5l2.2 2.3" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Upload a new license photo or PDF (demo placeholder)
+          </div>
+        </div>
+        <button class="btn btn-ghost" onclick="showToast('Sent for re-verification (demo)')" style="animation:none;">Submit for re-verification</button>
+        <p class="ver-note">Changing your license sends your profile for review — usually within 2 working days. Your listing stays live while we check. New clinics apply on the <a href="join.html">Join the Hub</a> page.</p>
+      </div>
+
+      <div class="panel reveal">
+        <h2>Visibility</h2>
+        <div class="vis-row">
+          <span class="lbl2">
+            <strong>Listed on Skin Care Hub</strong>
+            <span>Switch off to pause new bookings — existing ones stay.</span>
+          </span>
+          <span class="switch on" onclick="this.classList.toggle('on')"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: live preview -->
+    <div>
+      <div class="preview-wrap reveal d1">
+        <div class="preview-lbl">Live preview · patient view</div>
+        <article class="clinic-card">
+          <div class="photo">
+            <span class="ph-note">Clinic photo</span>
+            <img class="clinic-img" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=640&q=80&auto=format&fit=crop" alt="" loading="lazy" onerror="this.remove()">
+            <div class="badges">
+              <span class="badge badge-verified">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#2F4A3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Verified
+              </span>
+            </div>
+          </div>
+          <div class="body">
+            <h3 id="prevName">Sample Skin Clinic</h3>
+            <div class="loc">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 7.2c1.5 2 3 3.2 3 5a3 3 0 1 1-6 0c0-1.8 1.5-3 3-5Z" stroke="#6E9A82" stroke-width="1.5"/></svg>
+              Hayatabad Phase 3 · 2.1 km
+            </div>
+            <span class="stars">
+              <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#C9A27E"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#C9A27E"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#C9A27E"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#C9A27E"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#EDE2D3"/></svg>
+              <span class="score">4.8</span><span class="count">(sample)</span>
+            </span>
+            <div class="tags">
+              <span class="tag">Hydrafacial</span>
+              <span class="tag">Chemical Peel</span>
+              <span class="tag">Laser</span>
+            </div>
+            <div class="foot">
+              <div class="price">Starting from<strong>Rs. 1,500</strong></div>
+              <a class="btn btn-primary" href="clinic.html" style="animation:none;">Book Now</a>
+            </div>
+          </div>
+        </article>
+        <p class="prev-note">This is how your card appears in search results. <a href="clinic.html">View full public page →</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-bar reveal">
+    <span>Changes are a demo — nothing is saved in this design preview.</span>
+    <button class="btn btn-primary" onclick="showToast()">Save changes</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#FFFBF7" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#FFFBF7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span id="toastMsg">Profile saved (demo)</span>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="cols">
+      <div>
+        <span class="brand">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8"/><path d="M12 10v7" stroke="#C9A27E" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Skin Care Hub
+        </span>
+        <p>A calm place to find and book trusted skin care and aesthetic clinics in Peshawar.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="clinics.html">Clinics</a></li>
+          <li><a href="index.html#treatments">Treatments</a></li>
+          <li><a href="index.html#how">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>For clinics</h5>
+        <ul>
+          <li><a href="join.html">Join the Hub</a></li>
+          <li><a href="dashboard.html">Clinic dashboard</a></li>
+          <li><a href="join.html#apply">Verification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Help centre</a></li>
+          <li><a href="#">Contact us</a></li>
+          <li><a href="#">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bar">
+      <span>© 2026 Skin Care Hub · Design concept with sample content only · <a href="screens.html" style="color:inherit;text-decoration:underline;">All screens</a> · <a href="admin.html" style="color:inherit;text-decoration:underline;">Admin console</a></span>
+      <span>Peshawar, Pakistan</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu(btn) {
+    btn.classList.toggle("open");
+    document.getElementById("mobileMenu").classList.toggle("open");
+  }
+  function syncPreview() {
+    const v = document.getElementById("nameInput").value.trim();
+    document.getElementById("prevName").textContent = v || "Your clinic name";
+  }
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    document.getElementById("toastMsg").textContent = msg || "Profile saved (demo)";
+    t.classList.add("show");
+    clearTimeout(t._h);
+    t._h = setTimeout(() => t.classList.remove("show"), 2200);
+  }
+
+  let pending = [...document.querySelectorAll(".reveal")];
+  function sweep() {
+    const vh = window.innerHeight;
+    pending = pending.filter((el) => {
+      if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add("in"); return false; }
+      return true;
+    });
+  }
+  window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
+  window.addEventListener("resize", sweep);
+  sweep();
+</script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script>SCH.require("clinic", "login.html?next=dashboard.html");</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+/* ---------- clinics page only ---------- */
+
+  .page-head {
+    padding: 48px 0 8px;
+  }
+  .page-head h1 {
+    font-size: clamp(32px, 4vw, 44px);
+    line-height: 1.1;
+    margin: 14px 0 10px;
+  }
+  .page-head p { color: var(--ink-soft); font-size: 16.5px; max-width: 520px; }
+
+  /* search + filter bar */
+  .filter-bar {
+    position: relative;
+    z-index: 5;
+    margin-top: 28px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 18px;
+  }
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-row .search-wrap { flex: 2 1 260px; }
+  .filter-row .field.search-wrap { flex: 2 1 260px; }
+  .filter-row .field { flex: 1 1 170px; }
+  .filter-row .btn { flex: 0 0 auto; padding: 14px 30px; font-size: 15px; align-self: stretch; }
+
+  .chip-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+    user-select: none;
+  }
+  .chip:hover { transform: translateY(-2px); border-color: var(--sage); color: var(--forest); }
+  .chip.on { background: var(--forest); border-color: var(--forest); color: var(--white); }
+
+  /* results header */
+  .results-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 42px 0 24px;
+  }
+  .results-head .count { font-size: 15.5px; color: var(--ink-soft); }
+  .results-head .count strong { color: var(--forest); font-weight: 800; }
+  .sort {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+  .sort select {
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--forest);
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 9px 16px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* results grid */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 26px;
+  }
+  .clinic-card .open-note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--sage);
+    margin-top: 10px;
+  }
+  .clinic-card .open-note .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--sage);
+  }
+  .clinic-card .open-note.closed { color: #B06A5B; }
+  .clinic-card .open-note.closed .dot { background: #B06A5B; }
+
+  /* pagination */
+  .paging {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 52px;
+  }
+  .page-pill {
+    min-width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    color: var(--ink-soft);
+    font-weight: 800;
+    font-size: 15px;
+    text-decoration: none;
+    transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .page-pill:hover { transform: translateY(-2px); border-color: var(--sage); color: var(--forest); }
+  .page-pill.on { background: var(--forest); border-color: var(--forest); color: var(--white); }
+  .page-pill.arrow { padding: 0 18px; }
+
+  @media (max-width: 680px) {
+    .page-head { padding: 32px 0 8px; }
+    .chip-row {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-right: -16px;
+      scrollbar-width: none;
+    }
+    .chip-row::-webkit-scrollbar { display: none; }
+    .chip { flex: 0 0 auto; }
+    .filter-row .btn { width: 100%; }
+  }

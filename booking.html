@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirm Booking — Skin Care Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=1">
+<style>
+  /* ---------- booking page only ---------- */
+
+  .book-wrap { max-width: 980px; margin: 0 auto; }
+
+  /* step indicator */
+  .steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px 0 36px;
+    flex-wrap: wrap;
+  }
+  .step {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--ink-soft);
+  }
+  .step .n {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    font-family: var(--font-head);
+    font-size: 14px;
+  }
+  .step.done .n, .step.now .n { background: var(--forest); border-color: var(--forest); color: var(--white); }
+  .step.now { color: var(--forest); }
+  .step .n svg { display: block; }
+  .steps .bar {
+    width: 46px; height: 2px;
+    background: var(--line);
+    border-radius: 2px;
+  }
+  .steps .bar.fill { background: var(--sage); }
+
+  .page-title { text-align: center; margin-bottom: 36px; }
+  .page-title h1 { font-size: clamp(28px, 3.6vw, 38px); }
+  .page-title p { color: var(--ink-soft); font-size: 15.5px; margin-top: 8px; }
+
+  /* layout */
+  .confirm-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 32px;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+
+  .form-panel, .summary-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 32px;
+  }
+  .form-panel h2, .summary-card h2 { font-size: 21px; margin-bottom: 20px; }
+  .form-panel .field { margin-bottom: 18px; }
+  .form-panel textarea {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 18px;
+    outline: none;
+    resize: vertical;
+    min-height: 88px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .form-panel textarea:focus {
+    border-color: var(--sage);
+    box-shadow: 0 0 0 4px rgba(110, 154, 130, 0.14);
+  }
+
+  .choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .choice {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    user-select: none;
+  }
+  .choice:hover { transform: translateY(-2px); border-color: var(--sage); }
+  .choice.on { border-color: var(--sage); background: rgba(110, 154, 130, 0.08); }
+  .choice.off { opacity: .55; cursor: not-allowed; }
+  .choice .r {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    background: var(--white);
+    flex: 0 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color .2s ease;
+  }
+  .choice.on .r { border-color: var(--sage); }
+  .choice.on .r::after {
+    content: "";
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--sage);
+  }
+  .choice strong { display: block; font-size: 14.5px; color: var(--forest); }
+  .choice span { font-size: 12.5px; color: var(--ink-soft); }
+
+  /* summary */
+  .summary-card { position: sticky; top: 110px; }
+  .clinic-mini {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 18px;
+  }
+  .clinic-mini .thumb {
+    width: 62px; height: 62px;
+    border-radius: 18px;
+    overflow: hidden;
+    flex: 0 0 62px;
+    background: linear-gradient(120deg, var(--blush), #EAD9C4);
+  }
+  .clinic-mini .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .clinic-mini strong { display: block; font-family: var(--font-head); font-size: 17px; color: var(--forest); }
+  .clinic-mini span { font-size: 13px; color: var(--ink-soft); }
+  .sum-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    padding: 7px 0;
+  }
+  .sum-row strong { color: var(--forest); font-weight: 700; text-align: right; }
+  .sum-row.total {
+    border-top: 1px solid var(--line);
+    margin-top: 12px;
+    padding-top: 15px;
+    font-size: 16px;
+  }
+  .sum-row.total strong { font-size: 19px; font-weight: 800; }
+  .sum-row .change {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--sage);
+    text-decoration: none;
+    margin-left: 8px;
+  }
+  .sum-row .change:hover { text-decoration: underline; }
+  .summary-card .btn-primary { width: 100%; margin-top: 20px; }
+  .summary-card .reassure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 12px;
+  }
+
+  /* success view */
+  #successView { display: none; text-align: center; padding: 30px 0 10px; }
+  #successView.show { display: block; animation: dropIn .7s cubic-bezier(.22,.8,.36,1) both; }
+  .success-drop {
+    width: 96px; height: 96px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: rgba(110, 154, 130, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bob 4s ease-in-out infinite;
+  }
+  #successView h1 { font-size: clamp(30px, 4vw, 42px); margin-bottom: 10px; }
+  #successView > p { color: var(--ink-soft); font-size: 16.5px; max-width: 440px; margin: 0 auto; }
+  .success-card {
+    max-width: 480px;
+    margin: 30px auto 0;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lift);
+    padding: 28px 30px;
+    text-align: left;
+  }
+  .success-card .ref {
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 14px;
+  }
+  .success-actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 860px) {
+    .confirm-grid { grid-template-columns: 1fr; }
+    .summary-card { position: static; order: -1; }
+    .choice-row { grid-template-columns: 1fr; }
+    .form-panel, .summary-card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ambient drifting shapes -->
+<svg class="leaf-bg tr" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="#FCE8E4"/>
+  <path d="M190 70 C 240 100, 258 160, 228 230" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2" fill="none"/>
+</svg>
+<svg class="leaf-bg bl" width="300" height="300" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="rgba(110,154,130,0.12)"/>
+</svg>
+<svg class="curl-bg ml" width="300" height="360" viewBox="0 0 300 360" fill="none">
+  <path d="M-30 330 C 70 300, 150 240, 150 160 C 150 95, 90 70, 72 115 C 58 150, 100 170, 128 142" stroke="#6E9A82" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M-30 356 C 90 326, 186 254, 196 160" stroke="#C9A27E" stroke-opacity="0.3" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<svg class="curl-bg mr" width="320" height="400" viewBox="0 0 320 400" fill="none">
+  <path d="M340 50 C 240 80, 160 150, 168 240 C 174 310, 240 330, 254 284 C 265 248, 220 230, 194 260" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M350 20 C 230 54, 130 140, 120 250" stroke="#6E9A82" stroke-opacity="0.28" stroke-width="2" stroke-linecap="round"/>
+</svg>
+
+<!-- NAV -->
+<div class="site-nav-wrap">
+  <nav class="site-nav">
+    <a class="brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Skin Care Hub
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="clinics.html">Clinics</a></li>
+      <li><a href="index.html#treatments">Treatments</a></li>
+      <li><a href="index.html#how">How it works</a></li>
+      <li><a href="join.html">List your clinic</a></li>
+      <li><a href="login.html">Sign in</a></li>
+    </ul>
+    <a class="nav-credits" style="display:none;" href="bookings.html" title="Your Hub credits">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8" fill="#C9A27E" fill-opacity="0.35"/></svg>
+      <b>240</b>&nbsp;credits
+    </a>
+    <a class="btn btn-primary" href="clinics.html" style="padding: 12px 26px; font-size: 15px;">Book Appointment</a>
+    <button class="burger" aria-label="Open menu" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="clinics.html">Clinics</a>
+    <a href="index.html#treatments">Treatments</a>
+    <a href="index.html#how">How it works</a>
+    <a href="join.html">List your clinic</a>
+    <a href="login.html">Sign in</a>
+    <a class="btn btn-primary" href="clinics.html">Book Appointment</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="book-wrap">
+
+    <!-- steps -->
+    <div class="steps reveal">
+      <span class="step done">
+        <span class="n">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#FFFBF7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        Choose treatment
+      </span>
+      <span class="bar fill"></span>
+      <span class="step now" id="stepDetails"><span class="n">2</span> Your details</span>
+      <span class="bar" id="barDone"></span>
+      <span class="step" id="stepDone"><span class="n">3</span> Confirmed</span>
+    </div>
+
+    <!-- FORM VIEW -->
+    <div id="formView">
+      <div class="page-title reveal">
+        <h1>Almost there</h1>
+        <p>Just a few details so the clinic knows who's coming.</p>
+      </div>
+
+      <div class="confirm-grid">
+        <!-- form -->
+        <div class="form-panel reveal">
+          <h2>Your details</h2>
+          <div class="field">
+            <label>Full name</label>
+            <input type="text" id="bkName" placeholder="e.g. Sana Khan">
+          </div>
+          <div class="field">
+            <label>Phone number</label>
+            <input type="text" id="bkPhone" placeholder="03XX XXXXXXX">
+            <div class="hint" style="font-size:13px;color:var(--ink-soft);margin-top:6px;">The clinic will send your confirmation by SMS or WhatsApp.</div>
+          </div>
+          <div class="field">
+            <label>Specialist preference</label>
+            <div class="choice-row">
+              <label class="choice on" data-group="pref">
+                <span class="r"></span>
+                <span><strong>No preference</strong><span>First available specialist</span></span>
+              </label>
+              <label class="choice" data-group="pref">
+                <span class="r"></span>
+                <span><strong>Female specialist</strong><span>Ladies-only room if available</span></span>
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Note for the clinic <span style="font-weight:400;color:var(--ink-soft);">(optional)</span></label>
+            <textarea id="bkNote" placeholder="Allergies, skin concerns, anything the clinic should know…"></textarea>
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>Payment</label>
+            <div class="choice-row">
+              <label class="choice on" data-group="pay">
+                <span class="r"></span>
+                <span><strong>Pay at clinic</strong><span>Cash or card after your visit</span></span>
+              </label>
+              <label class="choice off">
+                <span class="r"></span>
+                <span><strong>Pay online</strong><span>Coming soon</span></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- summary -->
+        <div class="summary-card reveal d1">
+          <h2>Booking summary</h2>
+          <div class="clinic-mini">
+            <span class="thumb">
+              <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=200&q=80&auto=format&fit=crop" alt="" onerror="this.remove()">
+            </span>
+            <span>
+              <strong>Sample Skin Clinic</strong>
+              <span>Hayatabad Phase 3 · Verified</span>
+            </span>
+          </div>
+          <div class="sum-row"><span>Treatment</span><strong><span id="sumTreat">Signature Glow Facial</span><a class="change" href="clinic.html">Change</a></strong></div>
+          <div class="sum-row"><span>Date</span><strong id="sumDate">Wed, 28 Oct 2026</strong></div>
+          <div class="sum-row"><span>Time</span><strong id="sumTime">3:30 PM · 45 min</strong></div>
+          <div class="sum-row"><span>Treatment price</span><strong id="sumPrice">Rs. 3,500</strong></div>
+          <div class="sum-row"><span>Booking fee</span><strong>Free</strong></div>
+          <div class="sum-row total"><span>Total at clinic</span><strong id="sumTotal">Rs. 3,500</strong></div>
+          <div id="bkErr" style="display:none;background:var(--blush);color:#B06A5B;font-size:13.5px;font-weight:700;border-radius:14px;padding:11px 16px;margin-top:16px;"></div>
+          <button class="btn btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+          <div class="reassure">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Free cancellation up to 12 hours before
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS VIEW -->
+    <div id="successView">
+      <div class="success-drop">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#6E9A82" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h1>Booking placed</h1>
+      <p>Your request has been sent to the clinic. You'll see it as confirmed in My bookings once the clinic accepts — then just arrive and relax.</p>
+      <div class="success-card">
+        <div class="ref" id="okRef">Booking · SCH-2026-0001</div>
+        <div class="clinic-mini">
+          <span class="thumb">
+            <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=200&q=80&auto=format&fit=crop" alt="" onerror="this.remove()">
+          </span>
+          <span>
+            <strong>Sample Skin Clinic</strong>
+            <span>Street 12, Hayatabad Phase 3, Peshawar</span>
+          </span>
+        </div>
+        <div class="sum-row"><span>Treatment</span><strong id="okTreat">Signature Glow Facial</strong></div>
+        <div class="sum-row"><span>When</span><strong id="okWhen">Wed, 28 Oct · 3:30 PM</strong></div>
+        <div class="sum-row total"><span>Total at clinic</span><strong id="okTotal">Rs. 3,500</strong></div>
+      </div>
+      <div class="success-actions">
+        <a class="btn btn-primary" href="bookings.html">View my bookings</a>
+        <a class="btn btn-secondary" href="index.html">Back to home</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="cols">
+      <div>
+        <span class="brand">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8"/><path d="M12 10v7" stroke="#C9A27E" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Skin Care Hub
+        </span>
+        <p>A calm place to find and book trusted skin care and aesthetic clinics in Peshawar.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="clinics.html">Clinics</a></li>
+          <li><a href="index.html#treatments">Treatments</a></li>
+          <li><a href="index.html#how">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>For clinics</h5>
+        <ul>
+          <li><a href="join.html">Join the Hub</a></li>
+          <li><a href="dashboard.html">Clinic dashboard</a></li>
+          <li><a href="clinic-profile.html">Verification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Help centre</a></li>
+          <li><a href="#">Contact us</a></li>
+          <li><a href="#">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bar">
+      <span>© 2026 Skin Care Hub · Design concept with sample content only · <a href="screens.html" style="color:inherit;text-decoration:underline;">All screens</a> · <a href="admin.html" style="color:inherit;text-decoration:underline;">Admin console</a></span>
+      <span>Peshawar, Pakistan</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu(btn) {
+    btn.classList.toggle("open");
+    document.getElementById("mobileMenu").classList.toggle("open");
+  }
+
+  // demo-only radio groups
+  document.querySelectorAll(".choice[data-group]").forEach((c) => {
+    c.addEventListener("click", () => {
+      const g = c.dataset.group;
+      document.querySelectorAll('.choice[data-group="' + g + '"]').forEach((x) => x.classList.remove("on"));
+      c.classList.add("on");
+    });
+  });
+
+  // prefill summary + form from the selection made on the clinic page
+  window.addEventListener("DOMContentLoaded", function () {
+    if (!window.SCH) return;
+    const p = SCH.pending();
+    if (p) {
+      document.getElementById("sumTreat").textContent = p.treatment;
+      document.getElementById("sumDate").textContent = p.day || "—";
+      document.getElementById("sumTime").textContent = (p.time || "—") + " · " + p.mins + " min";
+      document.getElementById("sumPrice").textContent = SCH.money(p.price);
+      document.getElementById("sumTotal").textContent = SCH.money(p.price);
+    }
+    const u = SCH.user();
+    if (u) {
+      if (u.name && !/^Guest/.test(u.name)) document.getElementById("bkName").value = u.name;
+      if (u.phone) document.getElementById("bkPhone").value = u.phone;
+    }
+  });
+
+  function confirmBooking() {
+    const errEl = document.getElementById("bkErr");
+    errEl.style.display = "none";
+    const name = document.getElementById("bkName").value.trim();
+    const phone = document.getElementById("bkPhone").value.trim();
+    if (!name) { errEl.textContent = "Please enter your full name."; errEl.style.display = "block"; return; }
+    if (phone.replace(/\D/g, "").length < 10) { errEl.textContent = "Enter a valid phone number (03XX XXXXXXX)."; errEl.style.display = "block"; return; }
+
+    const p = SCH.pending() || {
+      clinicId: "c-sample", clinic: "Sample Skin Clinic",
+      address: "Street 12, Hayatabad Phase 3, Peshawar",
+      treatment: "Signature Glow Facial", price: 3500, mins: 45, day: "", time: ""
+    };
+    const pref = document.querySelector('.choice[data-group="pref"].on strong');
+    const r = SCH.createBooking({
+      clinicId: p.clinicId,
+      clinic: p.clinic,
+      address: p.address,
+      treatment: p.treatment,
+      price: p.price,
+      mins: p.mins,
+      day: p.day,
+      time: p.time,
+      patientName: name,
+      patientPhone: phone,
+      pref: pref ? pref.textContent : "No preference",
+      note: document.getElementById("bkNote").value.trim()
+    });
+    if (!r.ok) { errEl.textContent = r.error; errEl.style.display = "block"; return; }
+    SCH.clearPending();
+
+    document.getElementById("okRef").textContent = "Booking · " + r.booking.ref;
+    document.getElementById("okTreat").textContent = r.booking.treatment;
+    document.getElementById("okWhen").textContent = (r.booking.day || "—") + " · " + (r.booking.time || "—");
+    document.getElementById("okTotal").textContent = SCH.money(r.booking.price);
+    const navB = document.querySelector(".nav-credits b");
+    if (navB && SCH.user()) navB.textContent = SCH.user().credits;
+
+    document.getElementById("formView").style.display = "none";
+    document.getElementById("successView").classList.add("show");
+    document.getElementById("stepDetails").classList.add("done");
+    document.getElementById("stepDetails").classList.remove("now");
+    document.getElementById("stepDetails").querySelector(".n").innerHTML =
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#FFFBF7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    document.getElementById("barDone").classList.add("fill");
+    document.getElementById("stepDone").classList.add("now");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  let pending = [...document.querySelectorAll(".reveal")];
+  function sweep() {
+    const vh = window.innerHeight;
+    pending = pending.filter((el) => {
+      if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add("in"); return false; }
+      return true;
+    });
+  }
+  window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
+  window.addEventListener("resize", sweep);
+  sweep();
+</script>
+<script>
+  try {
+    if (localStorage.getItem("schUser")) {
+      var sc_c = document.querySelector(".nav-credits");
+      if (sc_c) sc_c.style.display = "inline-flex";
+      document.querySelectorAll('a[href="login.html"]').forEach(function (a) {
+        if (/Sign in/.test(a.textContent)) { a.textContent = "My bookings"; a.href = "bookings.html"; }
+      });
+    }
+  } catch (e) {}
+</script>
+<script>
+  try { if (!localStorage.getItem("schUser")) window.location.replace("login.html?next=booking.html"); } catch (e) {}
+</script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
+

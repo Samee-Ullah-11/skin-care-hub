@@ -1,0 +1,288 @@
+/* ---------- clinic detail page only ---------- */
+
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    padding: 30px 0 22px;
+    flex-wrap: wrap;
+  }
+  .crumbs a { color: var(--ink-soft); text-decoration: none; font-weight: 700; transition: color .2s ease; }
+  .crumbs a:hover { color: var(--forest); }
+  .crumbs .sep { color: var(--gold); }
+  .crumbs .here { color: var(--forest); font-weight: 700; }
+
+  /* gallery */
+  .gallery {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    height: 420px;
+  }
+  .gallery .shot {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: linear-gradient(120deg, var(--blush) 0%, #F6E3D2 40%, #EAD9C4 70%, var(--blush) 100%);
+    background-size: 220% 220%;
+    animation: shimmer 9s ease-in-out infinite;
+  }
+  .gallery .shot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .5s cubic-bezier(.22,.8,.36,1);
+  }
+  .gallery .shot:hover img { transform: scale(1.04); }
+  .gallery .main { grid-row: 1 / 3; }
+  .gallery .shot .ph-note {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #B99772;
+  }
+  .gallery .main .badges {
+    position: absolute;
+    top: 16px; left: 16px;
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+  }
+  .gallery .main .badges .badge { background: rgba(255,255,255,0.92); }
+
+  /* header block */
+  .clinic-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin: 28px 0 10px;
+  }
+  .clinic-head h1 { font-size: clamp(30px, 3.8vw, 42px); line-height: 1.1; }
+  .clinic-head .meta {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+  .clinic-head .meta .item { display: inline-flex; align-items: center; gap: 6px; }
+  .open-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(110, 154, 130, 0.12);
+    color: var(--forest);
+    font-size: 13.5px;
+    font-weight: 800;
+    padding: 8px 15px;
+    border-radius: var(--radius-pill);
+  }
+  .open-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sage); }
+
+  /* layout */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 36px;
+    margin-top: 26px;
+  }
+
+  .panel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 32px;
+    margin-bottom: 26px;
+  }
+  .panel h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .panel > p { color: var(--ink-soft); font-size: 15.5px; }
+  .panel .note {
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: var(--cream);
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-top: 16px;
+  }
+
+  /* services */
+  .service {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .service:last-of-type { border-bottom: none; padding-bottom: 4px; }
+  .service .info strong { display: block; font-size: 16.5px; color: var(--forest); }
+  .service .info span { font-size: 13.5px; color: var(--ink-soft); }
+  .service .right { display: flex; align-items: center; gap: 16px; }
+  .service .price { font-weight: 800; color: var(--forest); font-size: 16px; white-space: nowrap; }
+  .service .btn { padding: 10px 20px; font-size: 14px; animation: none; }
+
+  /* amenities */
+  .amenities { display: flex; flex-wrap: wrap; gap: 10px; }
+  .amenity {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 9px 16px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+
+  /* booking card */
+  .book-card {
+    position: sticky;
+    top: 110px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lift);
+    padding: 28px;
+  }
+  .book-card h2 { font-size: 22px; margin-bottom: 18px; }
+  .book-card .field { margin-bottom: 16px; }
+  .slot-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--forest);
+    margin: 4px 0 10px;
+  }
+  .day-row, .slot-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .day {
+    flex: 1 1 0;
+    min-width: 58px;
+    text-align: center;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 9px 4px;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    user-select: none;
+  }
+  .day:hover { transform: translateY(-2px); border-color: var(--sage); }
+  .day.on { background: var(--forest); border-color: var(--forest); }
+  .day strong { display: block; font-size: 14px; color: var(--forest); }
+  .day span { font-size: 11.5px; color: var(--ink-soft); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  .day.on strong, .day.on span { color: var(--white); }
+  .slot {
+    flex: 1 1 28%;
+    text-align: center;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--forest);
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 9px 6px;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, color .2s ease, transform .2s ease;
+    user-select: none;
+  }
+  .slot:hover { transform: translateY(-2px); border-color: var(--sage); }
+  .slot.on { background: var(--gold); border-color: var(--gold); color: var(--white); }
+  .slot.off { opacity: .4; cursor: not-allowed; text-decoration: line-through; }
+  .book-card .btn-primary { width: 100%; margin-top: 20px; }
+  .book-card .reassure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 12px;
+  }
+
+  /* info card */
+  .info-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 26px;
+    align-items: start;
+  }
+  .info-row > div { min-width: 0; }
+  .info-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 28px;
+  }
+  .info-card h3 { font-size: 19px; margin-bottom: 14px; }
+  .hours { list-style: none; font-size: 14.5px; }
+  .hours li {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-soft);
+  }
+  .hours li:last-child { border-bottom: none; }
+  .hours li strong { color: var(--forest); font-weight: 700; }
+  .hours li.today { color: var(--forest); font-weight: 800; }
+  .map-ph {
+    position: relative;
+    height: 150px;
+    border-radius: var(--radius-md);
+    margin-top: 16px;
+    background:
+      linear-gradient(rgba(110,154,130,0.08), rgba(110,154,130,0.08)),
+      repeating-linear-gradient(0deg, transparent 0 34px, rgba(110,154,130,0.12) 34px 35px),
+      repeating-linear-gradient(90deg, transparent 0 34px, rgba(110,154,130,0.12) 34px 35px),
+      var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .map-ph svg { animation: bob 4s ease-in-out infinite; }
+
+  @media (max-width: 980px) {
+    .detail-grid { grid-template-columns: 1fr; }
+    .book-card { position: static; }
+  }
+  @media (max-width: 680px) {
+    .info-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 680px) {
+    .gallery {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 200px 110px;
+      height: auto;
+    }
+    .gallery .main { grid-row: 1; grid-column: 1 / 3; }
+    .panel { padding: 24px 20px; }
+    .service { flex-wrap: wrap; }
+    .service .right { width: 100%; justify-content: space-between; }
+  }

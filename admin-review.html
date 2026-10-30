@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review Application — Skin Care Hub Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=1">
+<style>
+  /* ---------- admin review page only ---------- */
+
+  .admin-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--forest);
+    color: var(--gold);
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 6px 13px;
+    border-radius: var(--radius-pill);
+  }
+
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    padding: 30px 0 18px;
+    flex-wrap: wrap;
+  }
+  .crumbs a { color: var(--ink-soft); text-decoration: none; font-weight: 700; }
+  .crumbs a:hover { color: var(--forest); }
+  .crumbs .sep { color: var(--gold); }
+  .crumbs .here { color: var(--forest); font-weight: 700; }
+
+  .rev-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 26px;
+  }
+  .rev-head h1 { font-size: clamp(28px, 3.6vw, 38px); margin: 6px 0 4px; }
+  .rev-head .meta { color: var(--ink-soft); font-size: 14.5px; }
+  .q-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 7px 14px;
+    border-radius: var(--radius-pill);
+    background: rgba(201,162,126,0.18);
+    color: #9A7449;
+    white-space: nowrap;
+  }
+
+  .rev-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 26px;
+    align-items: start;
+    margin-bottom: 70px;
+  }
+  .rev-grid > div { min-width: 0; }
+
+  .panel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .panel h2 { font-size: 21px; margin-bottom: 16px; }
+
+  .kv { display: grid; gap: 0; }
+  .kv .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14.5px;
+  }
+  .kv .row:last-child { border-bottom: none; }
+  .kv .k { color: var(--ink-soft); }
+  .kv .v { color: var(--forest); font-weight: 700; text-align: right; }
+
+  .doc-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .doc-card .ic {
+    width: 42px; height: 42px;
+    flex: 0 0 42px;
+    border-radius: 12px;
+    background: rgba(110, 154, 130, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .doc-card strong { display: block; font-size: 14.5px; color: var(--forest); }
+  .doc-card span { font-size: 12.5px; color: var(--ink-soft); }
+  .doc-card a {
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--sage);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .doc-card a:hover { text-decoration: underline; }
+
+  .ph-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .ph-strip .shot {
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(120deg, var(--blush), #EAD9C4);
+  }
+  .ph-strip .shot img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* checklist */
+  .check {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    user-select: none;
+  }
+  .check:last-of-type { border-bottom: none; }
+  .check .box {
+    width: 26px; height: 26px;
+    flex: 0 0 26px;
+    border-radius: 9px;
+    border: 2px solid var(--line);
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s ease, border-color .2s ease;
+  }
+  .check .box svg { opacity: 0; transition: opacity .2s ease; }
+  .check.on .box { background: var(--sage); border-color: var(--sage); }
+  .check.on .box svg { opacity: 1; }
+  .check strong { display: block; font-size: 14.5px; color: var(--forest); }
+  .check span { font-size: 12.5px; color: var(--ink-soft); }
+
+  .decide { position: sticky; top: 110px; }
+  .decide .panel { box-shadow: var(--shadow-lift); }
+  .decide .btn { width: 100%; }
+  .decide .btn + .btn { margin-top: 10px; }
+  .decide .reject {
+    background: none;
+    border: 2px solid #D8A79B;
+    color: #B06A5B;
+  }
+  .decide .reject:hover { background: var(--blush); transform: translateY(-2px); }
+  .decide .hint3 { font-size: 13px; color: var(--ink-soft); text-align: center; margin-top: 14px; }
+  .decide textarea {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    color: var(--ink);
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    outline: none;
+    resize: vertical;
+    min-height: 70px;
+    margin-bottom: 16px;
+  }
+
+  /* decision banners */
+  .banner {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    font-weight: 800;
+    font-size: 15px;
+    margin-bottom: 22px;
+  }
+  .banner.show { display: flex; animation: dropIn .5s cubic-bezier(.22,.8,.36,1) both; }
+  .banner.ok { background: rgba(110,154,130,0.14); color: var(--forest); }
+  .banner.no { background: var(--blush); color: #B06A5B; }
+
+  @media (max-width: 980px) {
+    .rev-grid { grid-template-columns: 1fr; }
+    .decide { position: static; }
+  }
+  @media (max-width: 620px) {
+    .panel { padding: 22px 18px; }
+    .ph-strip { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ambient drifting shapes -->
+<svg class="leaf-bg tr" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="#FCE8E4"/>
+  <path d="M190 70 C 240 100, 258 160, 228 230" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2" fill="none"/>
+</svg>
+<svg class="leaf-bg bl" width="300" height="300" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="rgba(110,154,130,0.12)"/>
+</svg>
+<svg class="curl-bg ml" width="300" height="360" viewBox="0 0 300 360" fill="none">
+  <path d="M-30 330 C 70 300, 150 240, 150 160 C 150 95, 90 70, 72 115 C 58 150, 100 170, 128 142" stroke="#6E9A82" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M-30 356 C 90 326, 186 254, 196 160" stroke="#C9A27E" stroke-opacity="0.3" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<svg class="curl-bg mr" width="320" height="400" viewBox="0 0 320 400" fill="none">
+  <path d="M340 50 C 240 80, 160 150, 168 240 C 174 310, 240 330, 254 284 C 265 248, 220 230, 194 260" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M350 20 C 230 54, 130 140, 120 250" stroke="#6E9A82" stroke-opacity="0.28" stroke-width="2" stroke-linecap="round"/>
+</svg>
+
+<!-- NAV -->
+<div class="site-nav-wrap">
+  <nav class="site-nav">
+    <a class="brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Skin Care Hub
+    </a>
+    <ul class="nav-links">
+      <li><a href="admin.html" class="active">Admin</a></li>
+      <li><a href="clinics.html">Public site</a></li>
+      <li><a href="index.html" style="color:#B06A5B;" title="Sign out" onclick="if(window.SCH)SCH.signOut()">Sign out</a></li>
+    </ul>
+    <span class="admin-tag">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8"/></svg>
+      Admin
+    </span>
+    <button class="burger" aria-label="Open menu" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="admin.html" class="active">Admin</a>
+    <a href="clinics.html">Public site</a>
+    <a href="index.html" style="color:#B06A5B;" onclick="if(window.SCH)SCH.signOut()">Sign out</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="admin.html">Admin</a><span class="sep">·</span>
+    <a href="admin.html">Verification queue</a><span class="sep">·</span>
+    <span class="here" id="crumbName">Application</span>
+  </nav>
+
+  <div class="banner ok" id="bannerOk">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.8"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#2F4A3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Approved — the clinic is now live on the Hub, and the owner has been notified.
+  </div>
+  <div class="banner no" id="bannerNo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#B06A5B" stroke-width="1.8"/><path d="M9.5 10.5l5 5M14.5 10.5l-5 5" stroke="#B06A5B" stroke-width="1.8" stroke-linecap="round"/></svg>
+    Rejected — the owner receives the reason and can re-apply once it's fixed.
+  </div>
+
+  <div class="rev-head reveal">
+    <div>
+      <span class="q-tag" id="revTag">New clinic application</span>
+      <h1 id="revName">Application</h1>
+      <div class="meta" id="revMeta">—</div>
+    </div>
+  </div>
+
+  <div class="rev-grid">
+
+    <!-- LEFT -->
+    <div>
+      <div class="panel reveal">
+        <h2>Application details</h2>
+        <div class="kv">
+          <div class="row"><span class="k">Clinic name</span><span class="v" id="rvClinic">—</span></div>
+          <div class="row"><span class="k">Owner / manager</span><span class="v" id="rvOwner">—</span></div>
+          <div class="row"><span class="k">Phone</span><span class="v" id="rvPhone">—</span></div>
+          <div class="row"><span class="k">Address</span><span class="v" id="rvAddress">—</span></div>
+          <div class="row"><span class="k">Services</span><span class="v" id="rvServices">—</span></div>
+          <div class="row"><span class="k">PMC license</span><span class="v" id="rvLicense">—</span></div>
+          <div class="row"><span class="k">Owner note</span><span class="v" id="rvNote">—</span></div>
+        </div>
+      </div>
+
+      <div class="panel reveal">
+        <h2>Documents</h2>
+        <div class="doc-card">
+          <span class="ic">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 3h7l4 4v14H7V3Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v4h4" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </span>
+          <span><strong>PMC-license.pdf</strong><span>Uploaded with application · 1.2 MB (sample)</span></span>
+          <a href="#" onclick="return false;">Open</a>
+        </div>
+        <div class="doc-card">
+          <span class="ic">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 3h7l4 4v14H7V3Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v4h4" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </span>
+          <span><strong>Owner-CNIC.jpg</strong><span>Identity document · 800 KB (sample)</span></span>
+          <a href="#" onclick="return false;">Open</a>
+        </div>
+      </div>
+
+      <div class="panel reveal">
+        <h2>Clinic photos</h2>
+        <div class="ph-strip">
+          <span class="shot"><img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=400&q=80&auto=format&fit=crop" alt="" onerror="this.remove()"></span>
+          <span class="shot"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80&auto=format&fit=crop" alt="" onerror="this.remove()"></span>
+          <span class="shot"><img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&q=80&auto=format&fit=crop" alt="" onerror="this.remove()"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: decision -->
+    <div class="decide reveal d1">
+      <div class="panel">
+        <h2>Verification checklist</h2>
+        <div class="check on" onclick="this.classList.toggle('on'); gate();">
+          <span class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#FFFBF7" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span><strong>License is valid</strong><span>Number checked against PMC registry</span></span>
+        </div>
+        <div class="check on" onclick="this.classList.toggle('on'); gate();">
+          <span class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#FFFBF7" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span><strong>Identity matches</strong><span>Owner document matches application</span></span>
+        </div>
+        <div class="check" onclick="this.classList.toggle('on'); gate();">
+          <span class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#FFFBF7" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span><strong>Photos look genuine</strong><span>Real premises, no stock images</span></span>
+        </div>
+        <div class="check" onclick="this.classList.toggle('on'); gate();">
+          <span class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="#FFFBF7" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span><strong>Phone verified</strong><span>Owner reachable on the listed number</span></span>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <label style="display:block;font-size:13.5px;font-weight:700;color:var(--forest);margin-bottom:8px;">Note to owner (sent on reject)</label>
+          <textarea id="rejNote" placeholder="e.g. License photo is blurry — please re-upload…"></textarea>
+          <button class="btn btn-primary" id="approveBtn" disabled style="opacity:.5;cursor:not-allowed;" onclick="decide(true)">Approve &amp; publish</button>
+          <button class="btn reject" onclick="decide(false)">Reject application</button>
+          <div class="hint3">Approve unlocks when all four checks pass.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="bar" style="border:none; padding-top:0;">
+      <span>© 2026 Skin Care Hub · Admin console · Design concept with sample content only</span>
+      <span>Peshawar, Pakistan</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu(btn) {
+    btn.classList.toggle("open");
+    document.getElementById("mobileMenu").classList.toggle("open");
+  }
+  function gate() {
+    const all = document.querySelectorAll(".check").length;
+    const on = document.querySelectorAll(".check.on").length;
+    const b = document.getElementById("approveBtn");
+    const ok = on === all;
+    b.disabled = !ok;
+    b.style.opacity = ok ? "1" : ".5";
+    b.style.cursor = ok ? "pointer" : "not-allowed";
+  }
+  function decide(approve) {
+    if (window.SCH && window.__appId) {
+      SCH.setApplication(window.__appId, approve ? "approved" : "rejected", document.getElementById("rejNote").value.trim());
+    }
+    document.getElementById("bannerOk").classList.toggle("show", approve);
+    document.getElementById("bannerNo").classList.toggle("show", !approve);
+    document.getElementById("approveBtn").disabled = true;
+    document.getElementById("approveBtn").style.opacity = ".5";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  gate();
+
+  let pending = [...document.querySelectorAll(".reveal")];
+  function sweep() {
+    const vh = window.innerHeight;
+    pending = pending.filter((el) => {
+      if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add("in"); return false; }
+      return true;
+    });
+  }
+  window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
+  window.addEventListener("resize", sweep);
+  sweep();
+</script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script>
+  (function () {
+    const u = SCH.require("admin", "login.html?next=admin.html");
+    if (!u) return;
+    const id = new URLSearchParams(location.search).get("id");
+    const apps = SCH.applications();
+    const a = apps.find(x => x.id === id) || apps.find(x => x.status === "pending") || apps[0];
+    if (!a) { window.location.replace("admin.html"); return; }
+    window.__appId = a.id;
+    const set = (elId, v) => { document.getElementById(elId).textContent = v || "—"; };
+    set("crumbName", a.clinic);
+    set("revName", a.clinic);
+    set("revMeta", a.area + ", Peshawar · " + (a.at > 0 ? "Applied " + new Date(a.at).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "Applied recently") + " · " + a.id.toUpperCase());
+    set("rvClinic", a.clinic);
+    set("rvOwner", a.owner);
+    set("rvPhone", a.phone);
+    set("rvAddress", a.address);
+    set("rvServices", (a.services || []).join(" · "));
+    set("rvLicense", a.license);
+    set("rvNote", a.note);
+    if (a.status !== "pending") {
+      document.getElementById("revTag").textContent = a.status === "approved" ? "Already approved" : "Already rejected";
+      document.getElementById(a.status === "approved" ? "bannerOk" : "bannerNo").classList.add("show");
+      const b = document.getElementById("approveBtn");
+      b.disabled = true; b.style.opacity = ".5";
+    }
+  })();
+</script>
+</body>
+</html>

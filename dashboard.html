@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinic Dashboard — Skin Care Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=1">
+<style>
+  /* ---------- dashboard page only ---------- */
+
+  .dash-head { padding: 40px 0 0; }
+  .dash-head .row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .dash-head h1 { font-size: clamp(28px, 3.6vw, 38px); margin: 10px 0 4px; }
+  .dash-head .date { color: var(--ink-soft); font-size: 15px; }
+  .clinic-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-soft);
+    padding: 9px 20px 9px 10px;
+  }
+  .clinic-chip .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--blush);
+    flex: 0 0 40px;
+  }
+  .clinic-chip .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .clinic-chip strong { display: block; font-size: 14.5px; color: var(--forest); line-height: 1.3; }
+  .clinic-chip span { font-size: 12.5px; color: var(--sage); font-weight: 700; }
+
+  /* sub nav */
+  .sub-nav {
+    display: flex;
+    gap: 8px;
+    margin: 26px 0 30px;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 5px;
+    max-width: fit-content;
+  }
+  .sub-nav a {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    transition: background .25s ease, color .25s ease;
+    white-space: nowrap;
+  }
+  .sub-nav a.on { background: var(--forest); color: var(--white); }
+  .sub-nav a:not(.on):hover { color: var(--forest); background: var(--blush); }
+
+  /* stats */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+  }
+  .stat-tile {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    padding: 22px 24px;
+    transition: transform .3s cubic-bezier(.22,.8,.36,1), box-shadow .3s ease;
+  }
+  .stat-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+  .stat-tile .lbl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .stat-tile strong { font-family: var(--font-head); font-size: 30px; font-weight: 600; color: var(--forest); }
+  .stat-tile .sub { font-size: 12.5px; color: var(--sage); font-weight: 700; margin-top: 2px; }
+
+  /* layout */
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 26px;
+    align-items: start;
+    margin-bottom: 60px;
+  }
+  .dash-grid > div { min-width: 0; }
+  .panel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .panel h2 {
+    font-size: 21px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .panel h2 .mini {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--sage);
+  }
+
+  /* appointment rows */
+  .appt {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .appt:last-child { border-bottom: none; padding-bottom: 2px; }
+  .appt .time {
+    flex: 0 0 74px;
+    text-align: center;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 8px 4px;
+  }
+  .appt .time strong { display: block; font-size: 15px; color: var(--forest); }
+  .appt .time span { font-size: 11px; color: var(--ink-soft); font-weight: 700; text-transform: uppercase; }
+  .appt .who { flex: 1; min-width: 0; }
+  .appt .who strong { display: block; font-size: 15.5px; color: var(--forest); }
+  .appt .who span { font-size: 13.5px; color: var(--ink-soft); }
+  .appt .status { flex-shrink: 0; }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+  .status .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .status.confirmed { background: rgba(110,154,130,0.14); color: var(--forest); }
+  .status.confirmed .dot { background: var(--sage); }
+  .status.pending { background: rgba(201,162,126,0.18); color: #9A7449; }
+  .status.pending .dot { background: var(--gold); }
+  .status.completed { background: #F1EDE6; color: var(--ink-soft); }
+  .status.completed .dot { background: #B6AFA5; }
+  .appt .acts { display: flex; gap: 8px; flex-shrink: 0; }
+  .appt .acts .btn { padding: 8px 15px; font-size: 12.5px; animation: none; }
+  .appt .acts .decline {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #B06A5B;
+    cursor: pointer;
+    padding: 8px 8px;
+    border-radius: var(--radius-pill);
+    transition: background .2s ease;
+  }
+  .appt .acts .decline:hover { background: var(--blush); }
+
+  /* week chart */
+  .chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 150px;
+    padding-top: 8px;
+  }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; }
+  .bar {
+    width: 100%;
+    max-width: 44px;
+    border-radius: 10px 10px 4px 4px;
+    background: rgba(110, 154, 130, 0.25);
+    transition: transform .25s ease, background .25s ease;
+    transform-origin: bottom;
+  }
+  .bar-col:hover .bar { background: var(--sage); transform: scaleY(1.04); }
+  .bar-col.today .bar { background: var(--gold); }
+  .bar-col span { font-size: 12px; font-weight: 800; color: var(--ink-soft); }
+  .bar-col.today span { color: var(--gold-dark); }
+
+  /* side cards */
+  .next-card {
+    background: var(--forest);
+    color: var(--cream);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lift);
+    padding: 26px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .next-card .drop-deco {
+    position: absolute;
+    right: -14px; bottom: -18px;
+    opacity: .14;
+    animation: bob 6s ease-in-out infinite;
+  }
+  .next-card .lbl {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .next-card strong { font-family: var(--font-head); font-size: 22px; font-weight: 600; display: block; }
+  .next-card .t { font-size: 14.5px; color: rgba(255,251,247,0.75); margin: 4px 0 14px; }
+  .next-card .when {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,251,247,0.12);
+    border-radius: var(--radius-pill);
+    padding: 8px 15px;
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+
+  .qa-grid { display: grid; gap: 10px; }
+  .qa {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    padding: 13px 16px;
+    text-decoration: none;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--forest);
+    transition: border-color .2s ease, transform .2s ease, background .2s ease;
+  }
+  .qa:hover { transform: translateY(-2px); border-color: var(--sage); background: #FDFAF5; }
+  .qa .ic {
+    width: 36px; height: 36px;
+    flex: 0 0 36px;
+    border-radius: 50%;
+    background: rgba(110, 154, 130, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .meter-card .row2 { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--ink-soft); margin-bottom: 8px; }
+  .meter-card .row2 strong { color: var(--forest); }
+  .meter {
+    height: 10px;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+  .meter .fill {
+    width: 80%;
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(90deg, var(--sage), var(--gold));
+  }
+  .meter-card .hint2 { font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
+  .meter-card .hint2 a { color: var(--sage); font-weight: 800; text-decoration: none; }
+
+  @media (max-width: 980px) {
+    .dash-grid { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 860px) {
+    .site-nav .clinic-chip { padding: 5px; }
+    .site-nav .clinic-chip > span:last-child { display: none; }
+  }
+  @media (max-width: 620px) {
+    .appt { flex-wrap: wrap; }
+    .appt .acts { width: 100%; }
+    .appt .acts .btn { flex: 1; justify-content: center; }
+    .sub-nav { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+    .sub-nav::-webkit-scrollbar { display: none; }
+    .panel { padding: 22px 18px; }
+  }
+  .sub-nav .l-short { display: none; }
+  @media (max-width: 620px) {
+    .sub-nav { max-width: 100%; justify-content: space-between; gap: 4px; }
+    .sub-nav a { padding: 10px 13px; font-size: 13px; flex: 1; text-align: center; }
+    .sub-nav .l-full { display: none; }
+    .sub-nav .l-short { display: inline; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ambient drifting shapes -->
+<svg class="leaf-bg tr" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="#FCE8E4"/>
+  <path d="M190 70 C 240 100, 258 160, 228 230" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2" fill="none"/>
+</svg>
+<svg class="leaf-bg bl" width="300" height="300" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="rgba(110,154,130,0.12)"/>
+</svg>
+<svg class="curl-bg ml" width="300" height="360" viewBox="0 0 300 360" fill="none">
+  <path d="M-30 330 C 70 300, 150 240, 150 160 C 150 95, 90 70, 72 115 C 58 150, 100 170, 128 142" stroke="#6E9A82" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M-30 356 C 90 326, 186 254, 196 160" stroke="#C9A27E" stroke-opacity="0.3" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<svg class="curl-bg mr" width="320" height="400" viewBox="0 0 320 400" fill="none">
+  <path d="M340 50 C 240 80, 160 150, 168 240 C 174 310, 240 330, 254 284 C 265 248, 220 230, 194 260" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M350 20 C 230 54, 130 140, 120 250" stroke="#6E9A82" stroke-opacity="0.28" stroke-width="2" stroke-linecap="round"/>
+</svg>
+
+<!-- NAV -->
+<div class="site-nav-wrap">
+  <nav class="site-nav">
+    <a class="brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Skin Care Hub
+    </a>
+    <ul class="nav-links">
+      <li><a href="dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="clinic.html?preview=1">Public page</a></li>
+      <li><a href="index.html" style="color:#B06A5B;" title="Sign out" onclick="if(window.SCH)SCH.signOut()">Sign out</a></li>
+    </ul>
+    <span class="clinic-chip">
+      <span class="avatar">
+        <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=120&q=80&auto=format&fit=crop" alt="" onerror="this.remove()">
+      </span>
+      <span>
+        <strong>Sample Skin Clinic</strong>
+        <span>● Verified</span>
+      </span>
+    </span>
+    <button class="burger" aria-label="Open menu" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="clinic.html?preview=1">Public page</a>
+    <a href="index.html" style="color:#B06A5B;" onclick="if(window.SCH)SCH.signOut()">Sign out</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="dash-head reveal">
+    <div class="row">
+      <div>
+        <span class="eyebrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.8"/></svg>
+          Clinic dashboard · sample data
+        </span>
+        <h1 id="dashHello">Good morning ☁️</h1>
+        <div class="date" id="dashDate">Wednesday, 28 October 2026 · Hayatabad Phase 3</div>
+      </div>
+    </div>
+
+    <div class="sub-nav">
+      <a href="dashboard.html" class="on">Overview</a>
+      <a href="services.html"><span class="l-full">Services &amp; schedule</span><span class="l-short">Services</span></a>
+      <a href="clinic-profile.html"><span class="l-full">Clinic profile</span><span class="l-short">Profile</span></a>
+    </div>
+  </div>
+
+  <!-- stats -->
+  <div class="stat-row">
+    <div class="stat-tile reveal">
+      <div class="lbl">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="4" y="5.5" width="16" height="14.5" rx="4" stroke="#6E9A82" stroke-width="1.7"/><path d="M8 3.5v3M16 3.5v3M4 10h16" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Today
+      </div>
+      <strong>6</strong>
+      <div class="sub">bookings · 1 pending</div>
+    </div>
+    <div class="stat-tile reveal d1">
+      <div class="lbl">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 18c2.5-5 5-8 8-10M12 8c3 2 6 5 8 10" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round"/></svg>
+        This week
+      </div>
+      <strong>18</strong>
+      <div class="sub">+4 vs last week</div>
+    </div>
+    <div class="stat-tile reveal d2">
+      <div class="lbl">
+        <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#C9A27E"/></svg>
+        Rating
+      </div>
+      <strong>4.8</strong>
+      <div class="sub">from completed visits</div>
+    </div>
+    <div class="stat-tile reveal d3">
+      <div class="lbl">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Show-up rate
+      </div>
+      <strong>96%</strong>
+      <div class="sub">last 30 days</div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+
+    <!-- LEFT -->
+    <div>
+      <div class="panel reveal">
+        <h2>Hub bookings <span class="mini" id="hubCount">live</span></h2>
+        <div id="hubAppts"></div>
+
+        <h2 style="margin-top:26px;">Today's walk-ins <span class="mini">sample data</span></h2>
+
+        <div class="appt">
+          <span class="time"><strong>10:00</strong><span>am</span></span>
+          <span class="who"><strong>A. Khan (sample)</strong><span>Hydrafacial · 60 min</span></span>
+          <span class="status completed"><span class="dot"></span>Completed</span>
+        </div>
+
+        <div class="appt">
+          <span class="time"><strong>11:30</strong><span>am</span></span>
+          <span class="who"><strong>M. Bibi (sample)</strong><span>Skin Consultation · 20 min</span></span>
+          <span class="status completed"><span class="dot"></span>Completed</span>
+        </div>
+
+        <div class="appt">
+          <span class="time"><strong>3:30</strong><span>pm</span></span>
+          <span class="who"><strong>S. Khan (sample)</strong><span>Signature Glow Facial · 45 min</span></span>
+          <span class="status confirmed"><span class="dot"></span>Confirmed</span>
+        </div>
+
+        <div class="appt" id="pendingRow">
+          <span class="time"><strong>5:00</strong><span>pm</span></span>
+          <span class="who"><strong>H. Ali (sample)</strong><span>Chemical Peel · 30 min</span></span>
+          <span class="acts">
+            <button class="btn btn-primary" onclick="acceptAppt()">Accept</button>
+            <button class="decline">Decline</button>
+          </span>
+        </div>
+
+        <div class="appt">
+          <span class="time"><strong>6:30</strong><span>pm</span></span>
+          <span class="who"><strong>R. Gul (sample)</strong><span>Carbon Laser Facial · 40 min</span></span>
+          <span class="status confirmed"><span class="dot"></span>Confirmed</span>
+        </div>
+      </div>
+
+      <div class="panel reveal">
+        <h2>This week at a glance <span class="mini">bookings per day</span></h2>
+        <div class="chart">
+          <div class="bar-col"><div class="bar" style="height: 46%;"></div><span>Mon</span></div>
+          <div class="bar-col"><div class="bar" style="height: 62%;"></div><span>Tue</span></div>
+          <div class="bar-col today"><div class="bar" style="height: 88%;"></div><span>Wed</span></div>
+          <div class="bar-col"><div class="bar" style="height: 54%;"></div><span>Thu</span></div>
+          <div class="bar-col"><div class="bar" style="height: 72%;"></div><span>Fri</span></div>
+          <div class="bar-col"><div class="bar" style="height: 95%;"></div><span>Sat</span></div>
+          <div class="bar-col"><div class="bar" style="height: 14%;"></div><span>Sun</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+      <div class="next-card reveal">
+        <svg class="drop-deco" width="90" height="90" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#FFFBF7" stroke-width="1.3"/></svg>
+        <div class="lbl">Up next</div>
+        <strong>S. Khan (sample)</strong>
+        <div class="t">Signature Glow Facial · 45 min</div>
+        <span class="when">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="4" y="5.5" width="16" height="14.5" rx="4" stroke="#FFFBF7" stroke-width="1.7"/><path d="M8 3.5v3M16 3.5v3M4 10h16" stroke="#FFFBF7" stroke-width="1.7" stroke-linecap="round"/></svg>
+          Today · 3:30 PM
+        </span>
+      </div>
+
+      <div class="panel reveal d1">
+        <h2>Quick actions</h2>
+        <div class="qa-grid">
+          <a class="qa" href="#">
+            <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#6E9A82" stroke-width="2" stroke-linecap="round"/></svg></span>
+            Add walk-in booking
+          </a>
+          <a class="qa" href="services.html">
+            <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="4" y="5.5" width="16" height="14.5" rx="4" stroke="#6E9A82" stroke-width="1.8"/><path d="M8 3.5v3M16 3.5v3M4 10h16" stroke="#6E9A82" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            Edit services &amp; slots
+          </a>
+          <a class="qa" href="#">
+            <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 7.5V12l3 2" stroke="#6E9A82" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            Block a time slot
+          </a>
+          <a class="qa" href="clinic.html">
+            <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+            View public page
+          </a>
+        </div>
+      </div>
+
+      <div class="panel meter-card reveal d2">
+        <h2>Profile strength</h2>
+        <div class="row2"><span>Completeness</span><strong>80%</strong></div>
+        <div class="meter"><div class="fill"></div></div>
+        <div class="hint2">Add 2 more clinic photos to reach 100% — complete profiles get more bookings. <a href="clinic-profile.html">Edit profile</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="cols">
+      <div>
+        <span class="brand">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8"/><path d="M12 10v7" stroke="#C9A27E" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Skin Care Hub
+        </span>
+        <p>A calm place to find and book trusted skin care and aesthetic clinics in Peshawar.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="clinics.html">Clinics</a></li>
+          <li><a href="index.html#treatments">Treatments</a></li>
+          <li><a href="index.html#how">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>For clinics</h5>
+        <ul>
+          <li><a href="join.html">Join the Hub</a></li>
+          <li><a href="dashboard.html">Clinic dashboard</a></li>
+          <li><a href="join.html#apply">Verification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Help centre</a></li>
+          <li><a href="#">Contact us</a></li>
+          <li><a href="#">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bar">
+      <span>© 2026 Skin Care Hub · Design concept with sample content only · <a href="screens.html" style="color:inherit;text-decoration:underline;">All screens</a> · <a href="admin.html" style="color:inherit;text-decoration:underline;">Admin console</a></span>
+      <span>Peshawar, Pakistan</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu(btn) {
+    btn.classList.toggle("open");
+    document.getElementById("mobileMenu").classList.toggle("open");
+  }
+  // demo: accept pending appointment
+  function acceptAppt() {
+    const row = document.getElementById("pendingRow");
+    row.querySelector(".acts").outerHTML =
+      '<span class="status confirmed"><span class="dot"></span>Confirmed</span>';
+  }
+
+  let pending = [...document.querySelectorAll(".reveal")];
+  function sweep() {
+    const vh = window.innerHeight;
+    pending = pending.filter((el) => {
+      if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add("in"); return false; }
+      return true;
+    });
+  }
+  window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
+  window.addEventListener("resize", sweep);
+  sweep();
+</script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+<script>
+  (function () {
+    const u = SCH.require("clinic", "login.html?next=dashboard.html");
+    if (!u) return;
+
+    const now = new Date();
+    const h = now.getHours();
+    document.getElementById("dashHello").textContent =
+      h < 12 ? "Good morning ☁️" : h < 17 ? "Good afternoon ☀️" : "Good evening 🌙";
+    document.getElementById("dashDate").textContent =
+      now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " · Hayatabad Phase 3";
+
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+    const STATUS = {
+      pending:   "",
+      confirmed: '<span class="status confirmed"><span class="dot"></span>Confirmed</span>',
+      completed: '<span class="status completed"><span class="dot"></span>Completed</span>',
+      cancelled: '<span class="status completed"><span class="dot"></span>Cancelled</span>'
+    };
+    function renderHub() {
+      const list = SCH.clinicBookings("c-sample").filter(b => b.status !== "cancelled");
+      document.getElementById("hubCount").textContent = list.length + " total";
+      const host = document.getElementById("hubAppts");
+      if (!list.length) {
+        host.innerHTML = '<div class="appt"><span class="who"><span>No Hub bookings yet — bookings made by patients on the website appear here instantly.</span></span></div>';
+        return;
+      }
+      host.innerHTML = list.map(b => {
+        let right;
+        if (b.status === "pending") {
+          right = '<span class="acts">' +
+            '<button class="btn btn-primary" data-accept="' + b.id + '">Accept</button>' +
+            '<button class="decline" data-decline="' + b.id + '">Decline</button></span>';
+        } else if (b.status === "confirmed") {
+          right = '<span class="acts">' + STATUS.confirmed +
+            '<button class="btn btn-ghost" data-done="' + b.id + '" style="padding:8px 15px;font-size:12.5px;">Mark done</button></span>';
+        } else {
+          right = STATUS[b.status] || "";
+        }
+        return '<div class="appt">' +
+          '<span class="time"><strong>' + esc(b.time || "—") + '</strong><span>' + esc((b.day || "").slice(0, 11)) + '</span></span>' +
+          '<span class="who"><strong>' + esc(b.patientName || "Patient") + '</strong><span>' +
+            esc(b.treatment) + ' · ' + b.mins + ' min · ' + esc(b.ref) +
+            (b.note ? ' · “' + esc(b.note) + '”' : "") + '</span></span>' +
+          right +
+        '</div>';
+      }).join("");
+    }
+    document.addEventListener("click", function (e) {
+      const t = e.target.closest("[data-accept],[data-decline],[data-done]");
+      if (!t) return;
+      if (t.dataset.accept) SCH.setBookingStatus(t.dataset.accept, "confirmed");
+      if (t.dataset.decline && confirm("Decline this booking?")) SCH.setBookingStatus(t.dataset.decline, "cancelled");
+      if (t.dataset.done) SCH.setBookingStatus(t.dataset.done, "completed");
+      renderHub();
+    });
+    renderHub();
+  })();
+</script>
+</body>
+</html>

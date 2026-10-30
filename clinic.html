@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sample Skin Clinic — Skin Care Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css?v=1">
+<style>
+  /* ---------- clinic detail page only ---------- */
+
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    padding: 30px 0 22px;
+    flex-wrap: wrap;
+  }
+  .crumbs a { color: var(--ink-soft); text-decoration: none; font-weight: 700; transition: color .2s ease; }
+  .crumbs a:hover { color: var(--forest); }
+  .crumbs .sep { color: var(--gold); }
+  .crumbs .here { color: var(--forest); font-weight: 700; }
+
+  /* gallery */
+  .gallery {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    height: 420px;
+  }
+  .gallery .shot {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: linear-gradient(120deg, var(--blush) 0%, #F6E3D2 40%, #EAD9C4 70%, var(--blush) 100%);
+    background-size: 220% 220%;
+    animation: shimmer 9s ease-in-out infinite;
+  }
+  .gallery .shot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .5s cubic-bezier(.22,.8,.36,1);
+  }
+  .gallery .shot:hover img { transform: scale(1.04); }
+  .gallery .main { grid-row: 1 / 3; }
+  .gallery .shot .ph-note {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #B99772;
+  }
+  .gallery .main .badges {
+    position: absolute;
+    top: 16px; left: 16px;
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+  }
+  .gallery .main .badges .badge { background: rgba(255,255,255,0.92); }
+
+  /* header block */
+  .clinic-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin: 28px 0 10px;
+  }
+  .clinic-head h1 { font-size: clamp(30px, 3.8vw, 42px); line-height: 1.1; }
+  .clinic-head .meta {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+  .clinic-head .meta .item { display: inline-flex; align-items: center; gap: 6px; }
+  .open-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(110, 154, 130, 0.12);
+    color: var(--forest);
+    font-size: 13.5px;
+    font-weight: 800;
+    padding: 8px 15px;
+    border-radius: var(--radius-pill);
+  }
+  .open-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sage); }
+
+  /* layout */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 36px;
+    margin-top: 26px;
+  }
+
+  .panel {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 32px;
+    margin-bottom: 26px;
+  }
+  .panel h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .panel > p { color: var(--ink-soft); font-size: 15.5px; }
+  .panel .note {
+    font-size: 13px;
+    color: var(--ink-soft);
+    background: var(--cream);
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-top: 16px;
+  }
+
+  /* services */
+  .service {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .service:last-of-type { border-bottom: none; padding-bottom: 4px; }
+  .service .info strong { display: block; font-size: 16.5px; color: var(--forest); }
+  .service .info span { font-size: 13.5px; color: var(--ink-soft); }
+  .service .right { display: flex; align-items: center; gap: 16px; }
+  .service .price { font-weight: 800; color: var(--forest); font-size: 16px; white-space: nowrap; }
+  .service .btn { padding: 10px 20px; font-size: 14px; animation: none; }
+
+  /* amenities */
+  .amenities { display: flex; flex-wrap: wrap; gap: 10px; }
+  .amenity {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 9px 16px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+  }
+
+  /* booking card */
+  .book-card {
+    position: sticky;
+    top: 110px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lift);
+    padding: 28px;
+  }
+  .book-card h2 { font-size: 22px; margin-bottom: 18px; }
+  .book-card .field { margin-bottom: 16px; }
+  .slot-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--forest);
+    margin: 4px 0 10px;
+  }
+  .day-row, .slot-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .day {
+    flex: 1 1 0;
+    min-width: 58px;
+    text-align: center;
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 9px 4px;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    user-select: none;
+  }
+  .day:hover { transform: translateY(-2px); border-color: var(--sage); }
+  .day.on { background: var(--forest); border-color: var(--forest); }
+  .day strong { display: block; font-size: 14px; color: var(--forest); }
+  .day span { font-size: 11.5px; color: var(--ink-soft); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  .day.on strong, .day.on span { color: var(--white); }
+  .slot {
+    flex: 1 1 28%;
+    text-align: center;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--forest);
+    background: var(--cream);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 9px 6px;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, color .2s ease, transform .2s ease;
+    user-select: none;
+  }
+  .slot:hover { transform: translateY(-2px); border-color: var(--sage); }
+  .slot.on { background: var(--gold); border-color: var(--gold); color: var(--white); }
+  .slot.off { opacity: .4; cursor: not-allowed; text-decoration: line-through; }
+  .book-card .btn-primary { width: 100%; margin-top: 20px; }
+  .book-card .reassure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 12px;
+  }
+
+  /* info card */
+  .info-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 26px;
+    align-items: start;
+  }
+  .info-row > div { min-width: 0; }
+  .info-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 28px;
+  }
+  .info-card h3 { font-size: 19px; margin-bottom: 14px; }
+  .hours { list-style: none; font-size: 14.5px; }
+  .hours li {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-soft);
+  }
+  .hours li:last-child { border-bottom: none; }
+  .hours li strong { color: var(--forest); font-weight: 700; }
+  .hours li.today { color: var(--forest); font-weight: 800; }
+  .map-ph {
+    position: relative;
+    height: 150px;
+    border-radius: var(--radius-md);
+    margin-top: 16px;
+    background:
+      linear-gradient(rgba(110,154,130,0.08), rgba(110,154,130,0.08)),
+      repeating-linear-gradient(0deg, transparent 0 34px, rgba(110,154,130,0.12) 34px 35px),
+      repeating-linear-gradient(90deg, transparent 0 34px, rgba(110,154,130,0.12) 34px 35px),
+      var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .map-ph svg { animation: bob 4s ease-in-out infinite; }
+
+  @media (max-width: 980px) {
+    .detail-grid { grid-template-columns: 1fr; }
+    .book-card { position: static; }
+  }
+  @media (max-width: 680px) {
+    .info-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 680px) {
+    .gallery {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 200px 110px;
+      height: auto;
+    }
+    .gallery .main { grid-row: 1; grid-column: 1 / 3; }
+    .panel { padding: 24px 20px; }
+    .service { flex-wrap: wrap; }
+    .service .right { width: 100%; justify-content: space-between; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ambient drifting shapes -->
+<svg class="leaf-bg tr" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="#FCE8E4"/>
+  <path d="M190 70 C 240 100, 258 160, 228 230" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2" fill="none"/>
+</svg>
+<svg class="leaf-bg bl" width="300" height="300" viewBox="0 0 320 320" fill="none">
+  <path d="M160 20 C 250 60, 290 150, 240 260 C 150 230, 110 140, 160 20 Z" fill="rgba(110,154,130,0.12)"/>
+</svg>
+<svg class="curl-bg ml" width="300" height="360" viewBox="0 0 300 360" fill="none">
+  <path d="M-30 330 C 70 300, 150 240, 150 160 C 150 95, 90 70, 72 115 C 58 150, 100 170, 128 142" stroke="#6E9A82" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M-30 356 C 90 326, 186 254, 196 160" stroke="#C9A27E" stroke-opacity="0.3" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<svg class="curl-bg mr" width="320" height="400" viewBox="0 0 320 400" fill="none">
+  <path d="M340 50 C 240 80, 160 150, 168 240 C 174 310, 240 330, 254 284 C 265 248, 220 230, 194 260" stroke="#C9A27E" stroke-opacity="0.35" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M350 20 C 230 54, 130 140, 120 250" stroke="#6E9A82" stroke-opacity="0.28" stroke-width="2" stroke-linecap="round"/>
+</svg>
+
+<!-- NAV -->
+<div class="site-nav-wrap">
+  <nav class="site-nav">
+    <a class="brand" href="index.html">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Skin Care Hub
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="clinics.html">Clinics</a></li>
+      <li><a href="index.html#treatments">Treatments</a></li>
+      <li><a href="index.html#how">How it works</a></li>
+      <li><a href="join.html">List your clinic</a></li>
+      <li><a href="login.html">Sign in</a></li>
+    </ul>
+    <a class="nav-credits" style="display:none;" href="bookings.html" title="Your Hub credits">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8" fill="#C9A27E" fill-opacity="0.35"/></svg>
+      <b>240</b>&nbsp;credits
+    </a>
+    <a class="btn btn-primary" href="#book" style="padding: 12px 26px; font-size: 15px;">Book Appointment</a>
+    <button class="burger" aria-label="Open menu" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="clinics.html">Clinics</a>
+    <a href="index.html#treatments">Treatments</a>
+    <a href="index.html#how">How it works</a>
+    <a href="join.html">List your clinic</a>
+    <a href="login.html">Sign in</a>
+    <a class="btn btn-primary" href="clinics.html">Book Appointment</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- breadcrumbs -->
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="index.html">Home</a><span class="sep">·</span>
+    <a href="clinics.html">Clinics</a><span class="sep">·</span>
+    <span class="here">Sample Skin Clinic</span>
+  </nav>
+
+  <!-- GALLERY -->
+  <div class="gallery reveal">
+    <div class="shot main">
+      <span class="ph-note">Clinic photo</span>
+      <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1100&q=80&auto=format&fit=crop" alt="Treatment room (sample)" onerror="this.remove()">
+      <div class="badges">
+        <span class="badge badge-verified">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#2F4A3C" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#2F4A3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Verified
+        </span>
+        <span class="badge badge-featured">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#9A7449" stroke-width="1.7"/><path d="M12 10.5l.9 1.9 2 .3-1.4 1.4.3 2-1.8-1-1.8 1 .3-2-1.4-1.4 2-.3.9-1.9Z" fill="#9A7449"/></svg>
+          Featured
+        </span>
+      </div>
+    </div>
+    <div class="shot">
+      <span class="ph-note">Clinic photo</span>
+      <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=640&q=80&auto=format&fit=crop" alt="Facial session (sample)" onerror="this.remove()">
+    </div>
+    <div class="shot">
+      <span class="ph-note">Clinic photo</span>
+      <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=640&q=80&auto=format&fit=crop" alt="Calm spa room (sample)" onerror="this.remove()">
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="clinic-head reveal">
+    <div>
+      <h1>Sample Skin Clinic</h1>
+      <div class="meta">
+        <span class="item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 7.2c1.5 2 3 3.2 3 5a3 3 0 1 1-6 0c0-1.8 1.5-3 3-5Z" stroke="#6E9A82" stroke-width="1.5"/></svg>
+          Street 12, Hayatabad Phase 3, Peshawar · 2.1 km away
+        </span>
+        <span class="item stars">
+          <svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#C9A27E"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#C9A27E"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#C9A27E"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#C9A27E"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" fill="#EDE2D3"/></svg>
+          <span class="score">4.8</span><span class="count">(sample rating)</span>
+        </span>
+      </div>
+    </div>
+    <span class="open-pill"><span class="dot"></span>Open today · until 8:00 PM</span>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="detail-grid">
+
+    <!-- LEFT -->
+    <div>
+      <div class="panel reveal">
+        <h2>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 10v7" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+          About this clinic
+        </h2>
+        <p>Sample description for design review: a calm, hygiene-first skin care clinic offering dermatologist-led facials, laser treatments and skin consultations. The team focuses on gentle, evidence-based care with clear pricing and no pushy upselling.</p>
+        <div class="amenities" style="margin-top: 20px;">
+          <span class="amenity">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            PMC-licensed staff
+          </span>
+          <span class="amenity">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 20.5s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7.6a4.5 4.5 0 0 1 7.5 2.9c0 5.4-7.5 10-7.5 10Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            Ladies-only hours
+          </span>
+          <span class="amenity">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 21c-4-1.5-7-5-7-9.5C8 10 10.5 8 12 4c1.5 4 4 6 7 7.5 0 4.5-3 8-7 9.5Z" stroke="#6E9A82" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            Sterile single-use kits
+          </span>
+          <span class="amenity">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="4" y="5.5" width="16" height="14.5" rx="4" stroke="#6E9A82" stroke-width="1.7"/><path d="M8 3.5v3M16 3.5v3M4 10h16" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Free cancellation · 12h
+          </span>
+          <span class="amenity">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 19c2-5 4.5-8 7-10M12 9c2.5 2 5 5 7 10" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round"/><path d="M12 9c-1.5-1.8-1.5-4 0-5.5C13.5 5 13.5 7.2 12 9Z" stroke="#6E9A82" stroke-width="1.6"/></svg>
+            Parking available
+          </span>
+        </div>
+      </div>
+
+      <div class="panel reveal">
+        <h2>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M9.5 14a2.5 2.5 0 0 0 5 0" stroke="#6E9A82" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Treatments &amp; prices
+        </h2>
+        <div class="service">
+          <div class="info"><strong>Hydrafacial</strong><span>60 min · deep cleanse, exfoliation &amp; hydration</span></div>
+          <div class="right"><span class="price">Rs. 6,500</span><a class="btn btn-ghost" href="#book">Select</a></div>
+        </div>
+        <div class="service">
+          <div class="info"><strong>Signature Glow Facial</strong><span>45 min · brightening &amp; massage</span></div>
+          <div class="right"><span class="price">Rs. 3,500</span><a class="btn btn-ghost" href="#book">Select</a></div>
+        </div>
+        <div class="service">
+          <div class="info"><strong>Chemical Peel</strong><span>30 min · consultation included</span></div>
+          <div class="right"><span class="price">Rs. 5,000</span><a class="btn btn-ghost" href="#book">Select</a></div>
+        </div>
+        <div class="service">
+          <div class="info"><strong>Carbon Laser Facial</strong><span>40 min · pore refining</span></div>
+          <div class="right"><span class="price">Rs. 8,000</span><a class="btn btn-ghost" href="#book">Select</a></div>
+        </div>
+        <div class="service">
+          <div class="info"><strong>Skin Consultation</strong><span>20 min · with dermatologist</span></div>
+          <div class="right"><span class="price">Rs. 1,500</span><a class="btn btn-ghost" href="#book">Select</a></div>
+        </div>
+        <div class="note">Sample menu and prices for design review only.</div>
+      </div>
+
+      <div class="panel reveal">
+        <h2>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 20.5s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 7.6a4.5 4.5 0 0 1 7.5 2.9c0 5.4-7.5 10-7.5 10Z" stroke="#6E9A82" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          Patient reviews
+        </h2>
+        <p>Reviews from completed bookings will appear here. No reviews are shown in this design preview — real patient feedback only, never placeholders presented as real.</p>
+      </div>
+
+      <div class="info-row">
+        <div class="info-card reveal">
+          <h3>Opening hours</h3>
+          <ul class="hours">
+            <li class="today"><strong>Wednesday (today)</strong><span>10:00 AM – 8:00 PM</span></li>
+            <li><strong>Thu – Fri</strong><span>10:00 AM – 8:00 PM</span></li>
+            <li><strong>Saturday</strong><span>11:00 AM – 9:00 PM</span></li>
+            <li><strong>Sunday</strong><span>Closed</span></li>
+          </ul>
+        </div>
+
+        <div class="info-card reveal d1">
+          <h3>Location</h3>
+          <p style="font-size: 14.5px; color: var(--ink-soft);">Street 12, Hayatabad Phase 3, Peshawar</p>
+          <div class="map-ph">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z" stroke="#6E9A82" stroke-width="1.8"/><path d="M12 7.2c1.5 2 3 3.2 3 5a3 3 0 1 1-6 0c0-1.8 1.5-3 3-5Z" stroke="#6E9A82" stroke-width="1.5"/></svg>
+            Map preview
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+      <div class="book-card reveal" id="book">
+        <h2>Book an appointment</h2>
+        <div class="field">
+          <label>Treatment</label>
+          <select>
+            <option>Signature Glow Facial · Rs. 3,500</option>
+            <option>Hydrafacial · Rs. 6,500</option>
+            <option>Chemical Peel · Rs. 5,000</option>
+            <option>Carbon Laser Facial · Rs. 8,000</option>
+            <option>Skin Consultation · Rs. 1,500</option>
+          </select>
+        </div>
+        <div class="slot-label">Pick a day</div>
+        <div class="day-row">
+          <span class="day on"><span>Wed</span><strong>28</strong></span>
+          <span class="day"><span>Thu</span><strong>29</strong></span>
+          <span class="day"><span>Fri</span><strong>30</strong></span>
+          <span class="day"><span>Sat</span><strong>31</strong></span>
+          <span class="day"><span>Sun</span><strong>1</strong></span>
+        </div>
+        <div class="slot-label" style="margin-top: 16px;">Available times</div>
+        <div class="slot-grid">
+          <span class="slot">10:00</span>
+          <span class="slot">11:30</span>
+          <span class="slot off">1:00</span>
+          <span class="slot on">3:30</span>
+          <span class="slot">5:00</span>
+          <span class="slot">6:30</span>
+        </div>
+        <a class="btn btn-primary" href="booking.html" onclick="return gateBook()">Confirm Booking</a>
+        <div class="reassure">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" stroke-width="1.7"/><path d="M9.2 13.4l2 2 3.8-3.9" stroke="#6E9A82" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Free cancellation up to 12 hours before
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="cols">
+      <div>
+        <span class="brand">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" stroke-width="1.8"/><path d="M12 10v7" stroke="#C9A27E" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Skin Care Hub
+        </span>
+        <p>A calm place to find and book trusted skin care and aesthetic clinics in Peshawar.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="clinics.html">Clinics</a></li>
+          <li><a href="index.html#treatments">Treatments</a></li>
+          <li><a href="index.html#how">How it works</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>For clinics</h5>
+        <ul>
+          <li><a href="join.html">Join the Hub</a></li>
+          <li><a href="dashboard.html">Clinic dashboard</a></li>
+          <li><a href="clinic-profile.html">Verification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Help centre</a></li>
+          <li><a href="#">Contact us</a></li>
+          <li><a href="#">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bar">
+      <span>© 2026 Skin Care Hub · Design concept with sample content only · <a href="screens.html" style="color:inherit;text-decoration:underline;">All screens</a> · <a href="admin.html" style="color:inherit;text-decoration:underline;">Admin console</a></span>
+      <span>Peshawar, Pakistan</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu(btn) {
+    btn.classList.toggle("open");
+    document.getElementById("mobileMenu").classList.toggle("open");
+  }
+
+  // day picker — generate the next 5 real days
+  (function () {
+    const row = document.querySelector(".day-row");
+    if (!row) return;
+    row.innerHTML = "";
+    const names = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    for (let i = 0; i < 5; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      const el = document.createElement("span");
+      el.className = "day" + (i === 0 ? " on" : "");
+      el.dataset.date = names[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+      el.innerHTML = "<span>" + names[d.getDay()] + "</span><strong>" + d.getDate() + "</strong>";
+      el.addEventListener("click", () => {
+        document.querySelectorAll(".day").forEach((x) => x.classList.remove("on"));
+        el.classList.add("on");
+      });
+      row.appendChild(el);
+    }
+  })();
+  document.querySelectorAll(".slot:not(.off)").forEach((s) => {
+    s.addEventListener("click", () => {
+      document.querySelectorAll(".slot").forEach((x) => x.classList.remove("on"));
+      s.classList.add("on");
+    });
+  });
+
+  let pending = [...document.querySelectorAll(".reveal")];
+  function sweep() {
+    const vh = window.innerHeight;
+    pending = pending.filter((el) => {
+      if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add("in"); return false; }
+      return true;
+    });
+  }
+  window.addEventListener("scroll", () => requestAnimationFrame(sweep), { passive: true });
+  window.addEventListener("resize", sweep);
+  sweep();
+</script>
+<script>
+  try {
+    if (localStorage.getItem("schUser")) {
+      var sc_c = document.querySelector(".nav-credits");
+      if (sc_c) sc_c.style.display = "inline-flex";
+      document.querySelectorAll('a[href="login.html"]').forEach(function (a) {
+        if (/Sign in/.test(a.textContent)) { a.textContent = "My bookings"; a.href = "bookings.html"; }
+      });
+    }
+  } catch (e) {}
+</script>
+<script>
+  function captureSelection() {
+    const MINS = { "Hydrafacial": 60, "Signature Glow Facial": 45, "Chemical Peel": 30, "Carbon Laser Facial": 40, "Skin Consultation": 20 };
+    const sel = document.querySelector(".book-card select").value;
+    const name = sel.split("·")[0].trim();
+    const price = parseInt(sel.replace(/[^\d]/g, ""), 10) || 0;
+    const day = document.querySelector(".day.on");
+    const slot = document.querySelector(".slot.on");
+    if (window.SCH) SCH.setPending({
+      clinicId: "c-sample",
+      clinic: "Sample Skin Clinic",
+      address: "Street 12, Hayatabad Phase 3, Peshawar",
+      treatment: name,
+      price: price,
+      mins: MINS[name] || 30,
+      day: day ? day.dataset.date : "",
+      time: slot ? slot.textContent.trim() : ""
+    });
+  }
+  function gateBook() {
+    const slot = document.querySelector(".slot.on");
+    if (!slot) { alert("Please pick an available time first."); return false; }
+    captureSelection();
+    try { if (localStorage.getItem("schUser")) return true; } catch (e) {}
+    window.location.href = "login.html?next=booking.html";
+    return false;
+  }
+</script>
+<div id="previewBar" style="display:none;position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:150;background:var(--forest);color:var(--cream);font-size:13.5px;font-weight:700;padding:12px 20px;border-radius:999px;box-shadow:var(--shadow-lift);align-items:center;gap:12px;white-space:nowrap;">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" stroke="#FFFBF7" stroke-width="1.7"/><circle cx="12" cy="12" r="2.8" stroke="#FFFBF7" stroke-width="1.7"/></svg>
+  Previewing your public listing as patients see it
+  <a href="dashboard.html" style="color:var(--gold);font-weight:800;text-decoration:none;">Back to dashboard</a>
+</div>
+<script>
+  try {
+    if (new URLSearchParams(location.search).get("preview")) {
+      document.getElementById("previewBar").style.display = "flex";
+    }
+  } catch (e) {}
+</script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
+
