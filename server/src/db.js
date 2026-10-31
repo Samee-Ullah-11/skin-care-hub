@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 export async function connectDb() {
+  if (mongoose.connection.readyState === 1) return { persistent: true }; // already connected (warm serverless invocation)
   const uri = process.env.MONGODB_URI;
   if (uri) {
     await mongoose.connect(uri);
