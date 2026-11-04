@@ -32,9 +32,8 @@ export default function Footer() {
           <div>
             <h5>Support</h5>
             <ul>
-              <li><a href="#top">Help centre</a></li>
-              <li><a href="#top">Contact us</a></li>
-              <li><a href="#top">Privacy policy</a></li>
+              <li><Link to="/#how">How booking works</Link></li>
+              <li><a href="mailto:admin@skincarehub.pk">Contact the Hub</a></li>
             </ul>
           </div>
         </div>

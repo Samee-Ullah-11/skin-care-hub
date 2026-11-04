@@ -75,6 +75,7 @@ export function ClinicCard({ clinic, delay }) {
 export default function Clinics() {
   const { user } = useAuth();
   const [clinics, setClinics] = useState(null);
+  const [loadErr, setLoadErr] = useState(false);
   const [params] = useSearchParams();
   const [q, setQ] = useState(params.get("q") || "");
   const [area, setArea] = useState("All areas");
@@ -83,7 +84,7 @@ export default function Clinics() {
   const [sort, setSort] = useState("Recommended");
 
   useEffect(() => {
-    api("/clinics").then((d) => setClinics(d.clinics)).catch(() => setClinics([]));
+    api("/clinics").then((d) => setClinics(d.clinics)).catch(() => { setClinics([]); setLoadErr(true); });
   }, []);
 
   const results = useMemo(() => {
@@ -146,7 +147,6 @@ export default function Clinics() {
                   <option>Rs. 6,000+</option>
                 </select>
               </div>
-              <button className="btn btn-primary">Apply</button>
             </div>
             <div className="chip-row">
               {CHIPS.map((c) => (
@@ -178,7 +178,11 @@ export default function Clinics() {
 
           {clinics !== null && results.length === 0 && (
             <p style={{ textAlign: "center", color: "var(--ink-soft)", padding: "30px 0" }}>
-              No clinics match those filters — try clearing the search or picking another area.
+              {loadErr
+                ? "We couldn't load the clinics — check your connection and refresh the page."
+                : clinics.length === 0
+                  ? "No clinics are live on the Hub yet — new clinics appear here as soon as they're verified."
+                  : "No clinics match those filters — try clearing the search or picking another area."}
             </p>
           )}
         </div>

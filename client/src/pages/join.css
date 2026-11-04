@@ -40,9 +40,7 @@
     overflow: hidden;
     box-shadow: var(--shadow-lift);
     height: clamp(340px, 52vh, 470px);
-    background: linear-gradient(120deg, var(--blush) 0%, #F6E3D2 40%, #EAD9C4 70%, var(--blush) 100%);
-    background-size: 220% 220%;
-    animation: shimmer 9s ease-in-out infinite;
+    background: var(--blush);
   }
   .join-visual .photo img {
     position: absolute; inset: 0;

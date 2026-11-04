@@ -18,12 +18,15 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState(null);
   const [clinic, setClinic] = useState(null);
+  const [loadErr, setLoadErr] = useState(false);
 
   async function load() {
     try {
       setBookings((await api("/bookings/clinic")).bookings);
+      setLoadErr(false);
     } catch {
       setBookings([]);
+      setLoadErr(true);
     }
   }
   useEffect(() => {
@@ -44,7 +47,7 @@ export default function Dashboard() {
 
   const now = new Date();
   const h = now.getHours();
-  const hello = h < 12 ? "Good morning ☁️" : h < 17 ? "Good afternoon ☀️" : "Good evening 🌙";
+  const hello = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
   const dateLine = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + (clinic && clinic.area ? " · " + clinic.area : "");
 
   const all = bookings || [];
@@ -153,7 +156,11 @@ export default function Dashboard() {
           <div className="panel reveal">
             <h2>Hub bookings <span className="mini">{bookings === null ? "loading…" : live.length + " total"}</span></h2>
             {bookings !== null && live.length === 0 && (
-              <div className="appt"><span className="who"><span>No Hub bookings yet — bookings made by patients on the website appear here instantly.</span></span></div>
+              <div className="appt"><span className="who"><span>
+                {loadErr
+                  ? "We couldn't load your bookings — check your connection and refresh the page."
+                  : "No Hub bookings yet — bookings made by patients on the website appear here instantly."}
+              </span></span></div>
             )}
             {live.map((b) => (
               <div className="appt" key={b._id}>

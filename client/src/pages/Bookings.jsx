@@ -105,14 +105,17 @@ export default function Bookings() {
   const [bookings, setBookings] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [tab, setTab] = useState("up");
+  const [loadErr, setLoadErr] = useState(false);
 
   async function load() {
     try {
       const [b, r] = await Promise.all([api("/bookings/mine"), api("/reviews/mine")]);
       setBookings(b.bookings);
       setReviews(r.reviews);
+      setLoadErr(false);
     } catch {
       setBookings([]);
+      setLoadErr(true);
     }
   }
 
@@ -200,7 +203,9 @@ export default function Bookings() {
           ) : shown.length === 0 ? (
             <div className="tip" style={{ marginTop: 0 }}>
               <Drop size={20} color="#2F4A3C" />
-              {tab === "up" ? <>No upcoming bookings yet.&nbsp;<Link to="/clinics" style={{ color: "var(--forest)", fontWeight: 800 }}>Browse clinics</Link></> : "Past visits will appear here after your appointments."}
+              {loadErr
+                ? "We couldn't load your bookings — check your connection and refresh the page."
+                : tab === "up" ? <>No upcoming bookings yet.&nbsp;<Link to="/clinics" style={{ color: "var(--forest)", fontWeight: 800 }}>Browse clinics</Link></> : "Past visits will appear here after your appointments."}
             </div>
           ) : (
             <>

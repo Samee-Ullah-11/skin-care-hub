@@ -56,8 +56,11 @@ export default function Join() {
               </div>
             </div>
             <div className="join-visual">
-              <div className="photo">
-                <img src="https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=900&q=80&auto=format&fit=crop" alt="Calm treatment room" />
+              <div className="photo" aria-hidden="true" style={{ display: "grid", placeItems: "center" }}>
+                <svg width="120" height="120" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" strokeOpacity="0.55" strokeWidth="1.2" />
+                  <path d="M12 10v7" stroke="#C9A27E" strokeOpacity="0.55" strokeWidth="1" strokeLinecap="round" />
+                </svg>
               </div>
               <div className="join-float">
                 <strong>Bookings land in your dashboard</strong>

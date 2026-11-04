@@ -64,15 +64,6 @@ export default function Login() {
 
       <main className="auth-main">
         <div className="auth-grid">
-          <svg className="curl-hold" style={{ top: "-54px", right: "-40px" }} width="240" height="190" viewBox="0 0 240 190" fill="none">
-            <path d="M10 170 C 60 90, 140 40, 226 54 C 262 60, 250 104, 214 96 C 186 90, 192 58, 222 56" stroke="#C9A27E" strokeOpacity="0.5" strokeWidth="2.4" strokeLinecap="round" />
-            <path d="M-6 188 C 52 106, 132 58, 216 66" stroke="#6E9A82" strokeOpacity="0.35" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          <svg className="curl-hold" style={{ bottom: "-46px", left: "-44px", animationDelay: "-4s" }} width="230" height="160" viewBox="0 0 230 160" fill="none">
-            <path d="M224 24 C 160 86, 90 122, 14 112 C -20 107, -6 66, 26 74 C 52 80, 46 110, 18 110" stroke="#6E9A82" strokeOpacity="0.45" strokeWidth="2.4" strokeLinecap="round" />
-            <path d="M236 4 C 170 72, 96 112, 20 104" stroke="#C9A27E" strokeOpacity="0.32" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-
           <div className="auth-visual reveal in">
             <div className="veil"></div>
             <span className="pill">
@@ -146,7 +137,7 @@ export default function Login() {
                   {busy ? "One moment…" : isIn ? "Sign in" : "Create account"}
                 </button>
 
-                <p className="terms">By continuing you agree to our <a href="#terms" onClick={(e) => e.preventDefault()}>Terms</a> and <a href="#privacy" onClick={(e) => e.preventDefault()}>Privacy policy</a>.</p>
+                <p className="terms">By continuing you agree to the Hub's terms of use and privacy policy.</p>
                 <p className="terms" style={{ marginTop: "8px" }}>
                   Run a clinic? <Link to="/join" style={{ color: "var(--forest)", fontWeight: 700 }}>Apply to join the Hub</Link> — your sign-in is created when your clinic is approved.
                 </p>

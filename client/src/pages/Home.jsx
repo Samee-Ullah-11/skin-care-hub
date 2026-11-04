@@ -11,8 +11,9 @@ export default function Home() {
   const navigate = useNavigate();
   const [q, setQ] = useState("");
   const [clinics, setClinics] = useState(null);
+  const [loadErr, setLoadErr] = useState(false);
   useEffect(() => {
-    api("/clinics").then((d) => setClinics(d.clinics)).catch(() => setClinics([]));
+    api("/clinics").then((d) => setClinics(d.clinics)).catch(() => { setClinics([]); setLoadErr(true); });
   }, []);
   useReveal([clinics]);
 
@@ -29,13 +30,6 @@ export default function Home() {
 
   return (
     <>
-      <svg className="float-drop a" width="34" height="34" viewBox="0 0 24 24" fill="none">
-        <path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" strokeWidth="1.6"/>
-      </svg>
-      <svg className="float-drop b" width="28" height="28" viewBox="0 0 24 24" fill="none">
-        <path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#6E9A82" strokeWidth="1.6"/>
-      </svg>
-      
       {/* HERO */}
       <section className="hero">
         <div className="container">
@@ -71,13 +65,16 @@ export default function Home() {
               <div className="hero-stats">
                 <div className="stat"><strong>{clinics === null ? "…" : list.length}</strong><span>Partner clinic{list.length === 1 ? "" : "s"}</span></div>
                 <div className="stat"><strong>{clinics === null ? "…" : treatments}</strong><span>Treatment{treatments === 1 ? "" : "s"} to book</span></div>
-                <div className="stat"><strong>2 min</strong><span>Average booking</span></div>
+                <div className="stat"><strong>Free</strong><span>Booking fee</span></div>
               </div>
             </div>
       
             <div className="hero-visual">
-              <div className="main-photo">
-                <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&q=80&auto=format&fit=crop" alt="Calm facial skin care treatment" loading="eager" />
+              <div className="main-photo" aria-hidden="true" style={{ display: "grid", placeItems: "center" }}>
+                <svg width="140" height="140" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3c3 4 6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 3-7 6-11Z" stroke="#C9A27E" strokeOpacity="0.55" strokeWidth="1.2" />
+                  <path d="M12 10v7" stroke="#C9A27E" strokeOpacity="0.55" strokeWidth="1" strokeLinecap="round" />
+                </svg>
               </div>
               <div className="hero-float fl-rating">
                 <span className="ic">
@@ -233,7 +230,9 @@ export default function Home() {
             {clinics === null && <p style={{ color: "var(--ink-soft)" }}>Loading clinics…</p>}
             {clinics !== null && featured.length === 0 && (
               <p style={{ color: "var(--ink-soft)" }}>
-                No clinics are live yet — new clinics appear here as soon as they're verified. Run a clinic? <Link to="/join" style={{ color: "var(--forest)", fontWeight: 800 }}>Apply to join</Link>.
+                {loadErr
+                  ? "We couldn't load the clinics — check your connection and refresh the page."
+                  : <>No clinics are live yet — new clinics appear here as soon as they're verified. Run a clinic? <Link to="/join" style={{ color: "var(--forest)", fontWeight: 800 }}>Apply to join</Link>.</>}
               </p>
             )}
             {featured.map((c, i) => <ClinicCard key={c._id} clinic={c} delay={i} />)}
